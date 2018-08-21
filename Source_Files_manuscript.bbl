@@ -1,0 +1,210 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{queiroz2014accuracy}
+L.~Queiroz, M.~Souza, F.~Contreras, P.~Lyra, D.~Carvalho, On the accuracy of a
+  nonlinear finite volume method for the solution of diffusion problems using
+  different interpolations strategies, International Journal for Numerical
+  Methods in Fluids 74~(4) (2014) 270--291.
+\newblock \href {http://dx.doi.org/10.1002/fld.3850}
+  {\path{doi:10.1002/fld.3850}}.
+
+\bibitem{droniou2014finite}
+J.~Droniou, Finite volume schemes for diffusion equations: introduction to and
+  review of modern methods, Mathematical Models and Methods in Applied Sciences
+  24~(08) (2014) 1575--1619.
+\newblock \href {http://dx.doi.org/10.1142/S0218202514400041}
+  {\path{doi:10.1142/S0218202514400041}}.
+
+\bibitem{lipnikov2007monotone}
+K.~Lipnikov, M.~Shashkov, D.~Svyatskiy, Y.~Vassilevski, Monotone finite volume
+  schemes for diffusion equations on unstructured triangular and shape-regular
+  polygonal meshes, Journal of Computational Physics 227~(1) (2007) 492--512.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2007.08.008}
+  {\path{doi:10.1016/j.jcp.2007.08.008}}.
+
+\bibitem{yuan2008monotone}
+G.~Yuan, Z.~Sheng, Monotone finite volume schemes for diffusion equations on
+  polygonal meshes, Journal of computational physics 227~(12) (2008)
+  6288--6312.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2008.03.007}
+  {\path{doi:10.1016/j.jcp.2008.03.007}}.
+
+\bibitem{nordbotten2007monotonicity}
+J.~M. Nordbotten, I.~Aavatsmark, G.~Eigestad, Monotonicity of control volume
+  methods, Numerische Mathematik 106~(2) (2007) 255--288.
+\newblock \href {http://dx.doi.org/10.1007/s00211-006-0060-z}
+  {\path{doi:10.1007/s00211-006-0060-z}}.
+
+\bibitem{aavatsmark2002introduction}
+I.~Aavatsmark, An introduction to multipoint flux approximations for
+  quadrilateral grids, Computational Geosciences 6~(3) (2002) 405--432.
+
+\bibitem{edwards2008quasi}
+M.~G. Edwards, H.~Zheng, A quasi-positive family of continuous darcy-flux
+  finite-volume schemes with full pressure support, Journal of Computational
+  Physics 227~(22) (2008) 9333--9364.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2008.05.028}
+  {\path{doi:10.1016/j.jcp.2008.05.028}}.
+
+\bibitem{agelas2010convergence}
+L.~Ag{\'e}las, C.~Guichard, R.~Masson,
+  \href{http://ijfv.math.cnrs.fr/spip.php?article38}{Convergence of finite
+  volume mpfa o type schemes for heterogeneous anisotropic diffusion problems
+  on general meshes}, International Journal on Finite Volumes (2010) volume--7.
+\newline\urlprefix\url{http://ijfv.math.cnrs.fr/spip.php?article38}
+
+\bibitem{terekhov2017cell}
+K.~M. Terekhov, B.~T. Mallison, H.~A. Tchelepi, Cell-centered nonlinear
+  finite-volume methods for the heterogeneous anisotropic diffusion problem,
+  Journal of Computational Physics 330 (2017) 245--267.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2016.11.010}
+  {\path{doi:10.1016/j.jcp.2016.11.010}}.
+
+\bibitem{chen2008enriched}
+Q.-Y. Chen, J.~Wan, Y.~Yang, R.~T. Mifflin, Enriched multi-point flux
+  approximation for general grids, Journal of Computational Physics 227~(3)
+  (2008) 1701--1721.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2007.09.021}
+  {\path{doi:10.1016/j.jcp.2007.09.021}}.
+
+\bibitem{aavatsmark2008compact}
+I.~Aavatsmark, G.~Eigestad, B.~Mallison, J.~Nordbotten, A compact multipoint
+  flux approximation method with improved robustness, Numerical Methods for
+  Partial Differential Equations 24~(5) (2008) 1329--1360.
+\newblock \href {http://dx.doi.org/10.1002/num.20320}
+  {\path{doi:10.1002/num.20320}}.
+
+\bibitem{gao2011linearity}
+Z.~Gao, J.~Wu, A linearity-preserving cell-centered scheme for the
+  heterogeneous and anisotropic diffusion equations on general meshes,
+  International Journal for Numerical Methods in Fluids 67~(12) (2011)
+  2157--2183.
+\newblock \href {http://dx.doi.org/10.1002/fld.2496}
+  {\path{doi:10.1002/fld.2496}}.
+
+\bibitem{contreras2017non}
+F.~Contreras, M.~Souza, P.~Lyra, D.~Carvalho, A non-orthodox mpfa method
+  coupled to a high order modified flow oriented scheme for the simulation of
+  two-phase flows in heterogeneous and anisotropic reservoirs, in: SPE
+  Reservoir Simulation Conference, Society of Petroleum Engineers, 2017.
+\newblock \href {http://dx.doi.org/10.2118/182677-MS}
+  {\path{doi:10.2118/182677-MS}}.
+
+\bibitem{le2005finite}
+C.~Le~Potier, Finite volume scheme for highly anisotropic diffusion operators
+  on unstructured meshes, Comptes Rendus Mathematique (2005) 921--926\href
+  {http://dx.doi.org/10.1016/j.crma.2005.05.011}
+  {\path{doi:10.1016/j.crma.2005.05.011}}.
+
+\bibitem{herbin2008benchmark}
+R.~Herbin, F.~Hubert,
+  \href{https://hal.archives-ouvertes.fr/hal-00429843}{{Benchmark on
+  Discretization Schemes for Anisotropic Diffusion Problems on General Grids}},
+  in: ISTE (Ed.), {Finite volumes for complex applications V}, {Wiley}, France,
+  2008, pp. 659--692.
+\newline\urlprefix\url{https://hal.archives-ouvertes.fr/hal-00429843}
+
+\bibitem{aavatsmark1998discretization}
+I.~Aavatsmark, T.~Barkve, O.~B{\o}e, T.~Mannseth, Discretization on
+  unstructured grids for inhomogeneous, anisotropic media. part ii: Discussion
+  and numerical results, SIAM Journal on Scientific Computing 19~(5) (1998)
+  1717--1736.
+\newblock \href {http://dx.doi.org/10.1137/S1064827595293594}
+  {\path{doi:10.1137/S1064827595293594}}.
+
+\bibitem{edwards1998finite}
+M.~G. Edwards, C.~F. Rogers, Finite volume discretization with imposed flux
+  continuity for the general tensor pressure equation, Computational
+  Geosciences 2~(4) (1998) 259--290.
+\newblock \href {http://dx.doi.org/https://doi.org/10.1007/s10596-017-9717-1}
+  {\path{doi:https://doi.org/10.1007/s10596-017-9717-1}}.
+
+\bibitem{contreras2016cell}
+F.~Contreras, P.~Lyra, M.~Souza, D.~Carvalho, A cell-centered multipoint flux
+  approximation method with a diamond stencil coupled with a higher order
+  finite volume method for the simulation of oil--water displacements in
+  heterogeneous and anisotropic petroleum reservoirs, Computers \& Fluids 127
+  (2016) 1--16.
+\newblock \href {http://dx.doi.org/10.1016/j.compfluid.2015.11.013}
+  {\path{doi:10.1016/j.compfluid.2015.11.013}}.
+
+\bibitem{de2007node}
+D.~de~Carvalho, R.~Willmersdorf, P.~Lyra, A node-centred finite volume
+  formulation for the solution of two-phase flows in non-homogeneous porous
+  media, International journal for numerical methods in fluids 53~(8) (2007)
+  1197--1219.
+\newblock \href {http://dx.doi.org/10.1002/fld.1238}
+  {\path{doi:10.1002/fld.1238}}.
+
+\bibitem{bergman2011fundamentals}
+T.~L. Bergman, F.~P. Incropera, Fundamentals of heat and mass transfer, John
+  Wiley \& Sons, 2011.
+
+\bibitem{bear2013dynamics}
+J.~Bear, Dynamics of fluids in porous media, Courier Corporation, 2013.
+
+\bibitem{bird2007transport}
+R.~B. Bird, W.~E. Stewart, E.~N. Lightfoot, Transport phenomena, 430 (2007).
+
+\bibitem{gao2013small}
+Z.~Gao, J.~Wu, A small stencil and extremum-preserving scheme for anisotropic
+  diffusion problems on arbitrary 2d and 3d meshes, Journal of Computational
+  Physics 250 (2013) 308--331.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2013.05.013}
+  {\path{doi:10.1016/j.jcp.2013.05.013}}.
+
+\bibitem{huang1998study}
+W.~Huang, A.~M. Kappen,
+  \href{https://pdfs.semanticscholar.org/64bb/82ae284e7d8741d11206400730563a186f4b.pdf}{A
+  study of cell-center finite volume methods for diffusion equations}, Tech.
+  rep., Mathematics Research Report, 98-10-01, University of Kansas, Lawrence
+  KS66045 (1998).
+\newline\urlprefix\url{https://pdfs.semanticscholar.org/64bb/82ae284e7d8741d11206400730563a186f4b.pdf}
+
+\bibitem{basko2009efficient}
+M.~Basko, J.~Maruhn, A.~Tauschwitz, An efficient cell-centered diffusion scheme
+  for quadrilateral grids, Journal of Computational Physics 228~(6) (2009)
+  2175--2193.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2008.11.031}
+  {\path{doi:10.1016/j.jcp.2008.11.031}}.
+
+\bibitem{wu2005linearly}
+J.~Wu, Linearly exact method and the difference scheme for diffusion equation
+  on quadrilateral meshes, Annual Report (2005) 156--169.
+
+\bibitem{sheng2016new}
+Z.~Sheng, G.~Yuan, A new nonlinear finite volume scheme preserving positivity
+  for diffusion equations, Journal of Computational Physics 315 (2016)
+  182--193.
+\newblock \href {http://dx.doi.org/10.1016/j.jcp.2016.03.053}
+  {\path{doi:10.1016/j.jcp.2016.03.053}}.
+
+\bibitem{hopf1952remark}
+E.~Hopf, A remark on linear elliptic differential equations of second order,
+  Proceedings of the American Mathematical Society 3~(5) (1952) 791--793.
+\newblock \href {http://dx.doi.org/10.1090/S0002-9939-1952-0050126-X}
+  {\path{doi:10.1090/S0002-9939-1952-0050126-X}}.
+
+\bibitem{agelas2008symmetric}
+L.~Agelas, D.~Di~Pietro, R.~Masson, A symmetric and coercive finite volume
+  scheme for multiphase porous media flow problems with applications in the oil
+  industry, Finite volumes for complex applications V (2008) 35--51.
+
+\bibitem{eymard2007new}
+R.~Eymard, R.~Herbin, A new colocated finite volume scheme for the
+  incompressible navier--stokes equations on general non matching grids,
+  Comptes Rendus Math{\'e}matique 344~(10) (2007) 659--662.
+
+\bibitem{aavatsmark2007convergence}
+I.~Aavatsmark, G.~Eigestad, R.~Klausen, M.~Wheeler, I.~Yotov, Convergence of a
+  symmetric mpfa method on quadrilateral grids, Computational geosciences
+  11~(4) (2007) 333--345.
+\newblock \href {http://dx.doi.org/10.1007/s10596-007-9056-8}
+  {\path{doi:10.1007/s10596-007-9056-8}}.
+
+\end{thebibliography}

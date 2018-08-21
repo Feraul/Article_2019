@@ -1,0 +1,977 @@
+\documentclass[review]{elsarticle}
+
+\usepackage{lineno,hyperref}
+\usepackage{hyperref}
+\modulolinenumbers[5]
+\usepackage{multirow}
+\graphicspath{{./}}
+\newcommand{\mc}[3]{\multicolumn{#1}{#2}{#3}}
+\usepackage{xcolor}
+\newcommand\BibTeX{{\rmfamily B\kern-.05em \textsc{i\kern-.025em b}\kern-.08em
+T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\journal{Journal ...}
+
+\usepackage[mathcal]{eucal}
+\usepackage{amsmath}               % great math stuff
+\usepackage{mathtools}
+\usepackage{amsfonts}              % for blackboard bold, etc
+\usepackage{amsthm}                % better theorem environments
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+\usepackage{undertilde}            % botar tilde embaixo da letra
+\usepackage{mathptmx}              % fonte
+\usepackage{latexsym}
+\usepackage{makeidx}            % para definir o índice
+\usepackage{epsfig}             % para introduzir figuras no formato eps
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{changes}
+\usepackage{adjustbox}          % rotar tabelas
+\usepackage{lipsum}% <- For dummy text
+%\definechangesauthor[name={Per cusse}, color=orange]{per}
+%\setremarkmarkup{(#2)}
+\usepackage{graphicx}     % permite a inclusao de figuras
+\usepackage{caption}
+%%%%%%%%%%%%%%%%%%%%%%%
+%% Elsevier bibliography styles
+%%%%%%%%%%%%%%%%%%%%%%%
+%% To change the style, put a % in front of the second line of the current style and
+%% remove the % from the second line of the style you would like to use.
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Numbered
+%\bibliographystyle{model1-num-names}
+
+%% Numbered without titles
+%\bibliographystyle{model1a-num-names}
+
+%% Harvard
+%\bibliographystyle{model2-names}\biboptions{authoryear}
+
+%% Vancouver numbered
+%\usepackage{numcompress}\bibliographystyle{model3-num-names}
+
+%% Vancouver name/year
+%\usepackage{numcompress}\bibliographystyle{model4-names}\biboptions{authoryear}
+
+%% APA style
+%\bibliographystyle{model5-names}\biboptions{authoryear}
+
+%% AMA style
+%\usepackage{numcompress}\bibliographystyle{model6-num-names}
+
+%% `Elsevier LaTeX' style
+\bibliographystyle{elsarticle-num}
+
+%\bibliographystyle{plain}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Acceleration Strategies for Non-Linear Finite Volume Positive-Preserving for Diffusion Problems in Anisotropic and Heterogeneous Media}
+%\tnotetext[mytitlenote]{Fully documented templates are available in the elsarticle package on \href{http://www.ctan.org/tex-archive/macros/latex/contrib/elsarticle}{CTAN}.}
+
+%% or include affiliations in footnotes:
+
+%% Group authors per affiliation:
+\author[authorcorresponding]{Fernando Raul L. Contreras\corref{mycorrespondingauthor}}
+\cortext[mycorrespondingauthor]{Corresponding author}
+\ead{ferlicapac@gmail.com}
+\address[authorcorresponding]{Universidade Federal de Pernambuco, N\'ucleo de Tecnologia, Centro Acad\^emico do Agreste,  (NT-CAA),Rodovia BR 104 KM 59 s/n: 55002-970, Caruaru, PE-Brazil}
+%% or include affiliations in footnotes:
+\author[mymainaddress]{Paulo Roberto M. Lyra}
+\author[mymainaddress]{Darlan Karlo E. de Carvalho}
+\address[mymainaddress]{Universidade Federal de Pernambuco, Departamento de Engenharia Mec\^anica, Av. Acad\^emico H\'elio Ramos s/n: 50670-901, Recife, PE, Brazil}
+
+%\linenumbers
+\begin{abstract}
+In this paper, we present a não linear cell-centered finite volume positive-preseving (NLFV-PP) scheme for discretizing diffusion problems on general polygonal meshes. This scheme uses a quasi-local stencil to approximate the  control face flux when solving the steady state diffusion problem, being able to reproduce piecewise linear solutions exactly and it is very robust when dealing with heterogeneous and highly anisotropic media and severely distorted meshes. In our linear scheme, we first construct the one-sided fluxes on each control surface independently and then a unique flux expression is obtained by a convex combination of the one-sided fluxes. The unknown values at the vertices that define a control surface are interpolated by means of a linearity-preserving interpolation procedure, considering control volumes surrounding these vertices. To show the potential of the MPFA-QL scheme, we solve some benchmark using triangular and quadrilateral meshes.
+\end{abstract}
+
+\begin{keyword}
+Diffusion Problems \sep Nonlinear Finite Volume method \sep Anderson Acceleration \sep RRE and MPE\sep JFNK.
+\end{keyword}
+
+\end{frontmatter}
+
+%\linenumbers
+
+\section{Introduction}
+Diffusion processes based on conservations laws are present in several engineering applications, such as heat propagation or flows in porous media encountered in reservoir engineering. These physical phenomena are mathematically described by equations that have an elliptic operator with a diffusion coefficient, which can be, in general, discontinuous and represented by a tensor that usually can present a high-anisotropy ratio (\cite{queiroz2014accuracy}, \cite{droniou2014finite}). Accurate modeling of diffusion processes in these applications requires reliable discretization methods.
+In this paper, we are interested in constructing a linear cell-centered finite volume scheme which satisfies the following properties:
+\begin{itemize}
+\item it is locally conservative;
+\item	it must be reliable on unstructured anisotropic meshes that may be highly distorted;
+\item	it allows the use of heterogeneous full diffusion tensors;
+\item	it has a second-order accuracy for smooth solutions;
+\item	it reproduces piecewise linear solutions exactly.
+\end{itemize}
+These properties were suggested initially by Lipnikov et al. \cite{lipnikov2007monotone} and Yuan and Sheng \cite{yuan2008monotone} to characterize an ideal numerical method developed to solve elliptic problems. An additional and more difficult property to be satisfied is the Discrete Maximum Principle (DMP) which is very important in different areas of application, e.g., in the context of oil reservoir simulation, for which, in multiphase flows, unphysical oscillations in the discrete solution may produce spurious gas if the approximated pressure lies below the bubble-point curve of the mixture while the actual pressure lies above it yielding a diverging solution \cite{nordbotten2007monotonicity}. Classical discretization schemes for diffusion problems include linear: finite-differences (FD), finite-element (FE) or finite-volume (FV) methods. While the classical {\color{orange}five-point FD (seven-point in 3-D)} obeys the DMP, it produces solutions that have O(1) errors that are inconsistent for general non K-orthogonal meshes(\cite{aavatsmark2002introduction}, \cite{edwards2008quasi}). On the other hand, Linear Galerkin or Mixed FE and {\color{orange}Multipoint Flux Approximation (MPFA) finite volumes are able to produce consistent and convergent solutions slightly heterogeneous and anisotropic problems on non-distorted polygonal meshes. In contrast, for problems with highly anisotropic diffusion tensors or very distorted meshes some classical MPFA schemes may suffer from lost of accuracy and convergence and they still suffer from strong numerical oscillations ([8], [9]) that may not disappear with mesh refinement  (\cite{agelas2010convergence}, \cite{terekhov2017cell}) that may not disappear with mesh refinement}. 
+
+To mitigate these problems, for challenging cases, a new generation of linear and non-linear locally conservative numerical formulations have been proposed in literature (\cite{edwards2008quasi}, \cite{chen2008enriched}, \cite{aavatsmark2008compact}, \cite{gao2011linearity}). For diffusion problems with slightly anisotropic diffusion tensors and with non-distorted quadrilateral meshes, the classical MPFA-O scheme can adequately represent the scalar field {\color{orange}\cite{aavatsmark2002introduction}}. However, as it was shown by Nordbotten and Aavatsmark \cite{nordbotten2007monotonicity} the MPFA-O scheme fails to satisfy the maximum principle for strong anisotropies and/or grid skewness. To improve the robustness of the classical MPFA-O scheme, Edwards and Zheng \cite{edwards2008quasi} {\color{orange}and Chen et al. \cite{chen2008enriched}}  proposed a MPFA with Full Pressure Support (MPFA-FPS) that can reduce the numerical oscillations on general unstructured meshes for problems with anisotropic diffusion tensors or whenever using strongly distorted meshes. 
+
+In this paper, the diffusion problem is discretized by a non-orthodox cell-centered Multi-Point Flux Approximation Method with a Quasi-Local stencil (MPFA-QL) \cite{contreras2017non}. This method was based on a recent family of non-linear finite volume (NLFV) methods that were created to solve diffusion problems in heterogeneous and anisotropic media and that satisfy the DMP or, at least are monotone (\cite{le2005finite}, \cite{lipnikov2007monotone}, \cite{yuan2008monotone}). Our method is linear and does not formally satisfy the DMP but it was built to improve the robustness of the flux calculation, avoiding the necessity of solving a non-linear system of equations, usually by means of Picard iterations \cite{lipnikov2007monotone}, but it is very robust for highly heterogeneous and anisotropic diffusion tensors producing meaningful solutions {\color{orange}when} other {\color{orange}schemes fail (\cite{terekhov2017cell}, \cite{herbin2008benchmark})}. 
+
+In our proposed {\color{orange}formulation}, as in other finite volume schemes, the key point is the discretization of the flux across each cell control surface (edge in 2-D). We first construct the one-sided fluxes on each cell independently and then, integrate the two one-sided fluxes on both sides. Finally, the cell edge fluxes are expressed as a convex combination of the one side fluxes to obtain a unique flux expression. However, in contrast to other MPFA formulations (\cite{aavatsmark1998discretization}, \cite{edwards1998finite}, \cite{gao2011linearity}, \cite{contreras2016cell}), in our method, the flux on each {\color{orange}edge} is explicitly described by one cell centered unknown defined on the cells sharing that face and two auxiliary unknowns defined at two edge endpoints {\color{orange}(in 2-D)} that do not necessarily belong to the same edge shared by the adjacent cells. In fact, for more distorted meshes or highly anisotropic diffusion tensors{\color{red},} our scheme may use a strictly non-local stencil for the flux reconstruction. As the scheme is cell-centered, auxiliary nodal unknowns are expressed as weighted linear combinations of the neighboring cell-centered unknowns in order to reduce the scheme to a {\color{orange}completely} cell-centered one. In the method proposed by Gao and Wu \cite{gao2011linearity}, the weights are neither discontinuity or mesh topology dependent as in some of the other previous methods and can be used even for full tensor problems on any polygonal mesh. The derivation of the scheme and of these weights satisfy the {\color{orange}linearity-preserving} criterion, which requires that a discretization scheme should be exact on piecewise linear solutions (\cite{de2007node}, \cite{gao2011linearity}). 
+
+The outline of the paper is as follows. In Section 2, we briefly describe the mathematical model for the diffusion problem. In Section 3, we present a detailed formulation of our new MPFA-QL scheme. Numerical experiments demonstrating the convergence rates and robustness of our scheme for heterogeneous and anisotropic media using triangular and quadrilateral meshes are presented in Section 4. Finally, we summarize the conclusions in Section 5.
+
+\section{Mathematical model}
+\vspace{-2pt}
+The equation that defines the two-dimensional steady-state diffusion problem in heterogeneous and anisotropic media can be written as:
+\begin{equation}\label{eq1}
+\nabla \cdot \vec{\mathpzc{F}} =Q(\vec{x})\quad \text{with}\quad \vec{\mathpzc{F}}=-\utilde{K}(\vec{x})\nabla u \quad \text{in}\quad \vec{x}=(x,y)\in \Omega \subset \mathbb{R}^{2} 
+\end{equation}
+where $\Omega$  is an open bounded subset of $\mathbb{R}^{2}$ with $\partial\Omega$ being its boundary, $u$ refers to the potential variable or scalar variable, the flux $\vec{\mathpzc{F}}$ represents a diffusive flux as in the Fourier’s Law \cite{bergman2011fundamentals} for heat conduction, the Darcy's Law for flow in porous media \cite{bear2013dynamics} or the Fick’s Law for mass diffusion \cite{bird2007transport}. And $Q(\vec{x})$  represents a source (or sink) term. In Cartesian coordinates, the diffusion tensor is usually represented by:
+\begin{equation}\label{eq2} 
+ \utilde{K}(\vec{x})=\left( \begin{matrix}
+ {{k}_{xx}} & {{k}_{xy}}  \\
+ {{k}_{yx}} & {{k}_{yy}}  \\
+ \end{matrix} \right)
+\end{equation}
+which is a positive-definite symmetric matrix that can be discontinuous throughout the open domain $\Omega$.
+
+The problem described by Eq. \ref{eq1} is only completely defined when we use appropriate boundary conditions. Typical boundary conditions are given by:
+\begin{eqnarray}\label{eq3}
+\begin{matrix}
+u&=&g_{D}\quad \text{on}\quad \Gamma_{D},\\
+\vec{\mathpzc{F}}\cdot\vec{n}&=&g_{N} \quad\text{on}\quad \Gamma_{N}
+\end{matrix} 
+\end{eqnarray}
+where $\partial \Omega=\Gamma_{D}\cup \Gamma_{N}$, $\Gamma_{D}$ and $\Gamma_{N}$ represent the Dirichlet and Neumann boundaries, respectively. The scalar function $g_{D}$   (prescribed scalar variable) is defined in $\Gamma_{D}$ and $g_{N}$ (prescribed fluxes) is defined in $\Gamma_{N}$. Furthermore, $\vec{n}$  is the unit outward normal vector.
+
+
+\section{Numerical formulation}
+
+In this section, we present the numerical formulation of our non-orthodox Multipoint Flux Approximation Method (MPFA-QL), using the interpolation strategy proposed by Gao and Wu \cite{gao2011linearity}. 
+
+\subsection{Formulation of the NLFV-PP scheme} 
+A finite volume discretization of $\Omega$ is defined by a triplet ($\mathpzc{M}$, $\mathpzc{E}$, $\mathpzc{O}$), where:
+\begin{itemize}
+\item $\mathpzc{M}$ is the set of control volumes such that: $\bigcup_{\hat{L}\in \mathpzc{M}}\hat{L}=\Omega $, where each control volume  $\hat{L}$ is a star-shaped polygonal with respect to $x_{\hat{L}}$  (barycenter), which means that any straight line from $x_{\hat{L}}$ to a point on the boundary of $\hat{L}$ belongs entirely to the polygon \cite{lipnikov2007monotone}. The volume (area in 2D) of $\hat{L}\in \mathpzc{M}$  is denoted by $V_{\hat{L}}$  and the cardinal of $\mathpzc{M}$  is given by $n$.
+\item $\mathpzc{E}=\left\lbrace IJ\right\rbrace $ is the set of edges in $\Omega$, usually called control surfaces. For each $\hat{L}\in \mathpzc{M} $, there exist a subset  $\mathpzc{E}_{\hat{L}}$ of $\mathpzc{E}$ such that: $\bigcup_{IJ\in \mathpzc{E}_{\hat{L}}}IJ=\partial \hat{L}$. Also, we assume that for all $IJ\in \mathpzc{E}$, we have $IJ\subset\partial \Omega$  or $IJ\subset \hat{L}\cap\hat{R}$, for some $(\hat{L},\hat{R})\in \mathpzc{M} \times \mathpzc{M}$. The set of internal and external edges are denoted, respectively by $\mathpzc{E}^{\text{int}}=\mathpzc{E}\cap \Omega$  and $\mathpzc{E}^{\text{ext}}=\mathpzc{E}\cap \partial \Omega$ . Finally, the length of the edge $IJ$ is given by the Euclidean norm $\left| \overrightarrow{IJ} \right|$.
+\item $\mathpzc{O}=\left\lbrace x_{\hat{L}}\right\rbrace_{\hat{L}\in \mathpzc{M}} $ is the set of points (barycenter’s of the control volumes) of $\Omega$, such that for all $\hat{L}\in \mathpzc{M}$, $x_{\hat{L}}\in \hat{L}$.
+\end{itemize}
+Now, we integrate Eq. \ref{eq1} over the whole domain, yielding: 
+\begin{equation}\label{eq4} 
+\int\limits_{\Omega }{\nabla \cdot \vec{\mathpzc{F}}d\text{s}}=\int\limits_{\Omega }{QdV}
+\end{equation}
+The integral of the previous equation can by written as:
+\begin{equation}\label{eq4aux} 
+\sum_{\hat{L}\in \mathpzc{M}}\int\limits_{\hat{L} }{\nabla \cdot \vec{\mathpzc{F}}d\text{s}}=\sum_{\hat{L}\in \mathpzc{M}}\int\limits_{\hat{L} }{QdV}
+\end{equation}
+and applying the divergence theorem on the left-hand side of Eq. \ref{eq4aux}, we have:
+\begin{equation}\label{eq5} 
+\int\limits_{\hat{L} }{\nabla \cdot \vec{\mathpzc{F}}d\text{s}}=\int\limits_{\partial \hat{L} }{\vec{\mathpzc{F}}\cdot \vec{n}d\partial \hat{L}}
+\end{equation}
+
+Considering a control volume approach in which $\hat{L}\in \mathpzc{M}$ is a polygonal mesh, we can write the balance equation, as:
+\begin{equation}\label{eq6} 
+\sum\limits_{IJ\in {{\mathpzc{E}}_{{\hat{L}}}}}{{{{\vec{\mathpzc{F}}}}_{IJ}}\cdot {{{\vec{N}}}_{IJ}}}\quad={{\bar{Q}}_{{\hat{L}}}}{{V}_{{\hat{L}}}}, \quad \forall \hat{L}\in \mathpzc{M}
+\end{equation}
+where
+\begin{equation}\label{eq7}
+\int\limits_{\partial \hat{L}}{\vec{\mathpzc{F}}\cdot \vec{n}d\text{s}}= \sum\limits_{IJ\in {{\mathpzc{E}}_{{\hat{L}}}}}{{{{\vec{\mathpzc{F}}}}_{IJ}}\cdot {{{\vec{N}}}_{IJ}}}\quad \text{and}\quad \int\limits_{\hat{L}}QdV={{\bar{Q}}_{{\hat{L}}}}{{V}_{{\hat{L}}}}
+\end{equation}
+here $\vec{\mathpzc{F}}_{IJ}$ is the average flux density for edge $IJ$, i.e. ${{\vec{\mathpzc{F}}}_{IJ}}=\frac{1}{\left| \overrightarrow{IJ} \right|}\int\limits_{IJ}{\vec{\mathpzc{F}}ds}$, $\bar{Q}_{\hat{L}}$ is the average source or sink term and $\vec{N}_{IJ}$ is the area vector of the edge $IJ$.
+In Eq. \ref{eq7}, the numerical flux $\vec{\mathpzc{F}}_{IJ}\cdot \vec{N}_{IJ}$ can be approximated in many ways, each one leading to different, linear or non-linear finite volume schemes (\cite{edwards1998finite}, \cite{aavatsmark2002introduction}, \cite{le2005finite}, \cite{lipnikov2007monotone}, \cite{yuan2008monotone},\cite{gao2011linearity}). For a general edge $IJ$, the numerical flux must satisfy the local conservation equation, given by:
+\begin{equation}\label{eq8}
+{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}+{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{JI}}=0
+\end{equation}
+
+From Eqs. \ref{eq1} and \ref{eq5}, the one-sided flux through a edge $IJ$  with respect to control volume $\hat{L}$, is expressed as:
+\begin{equation}\label{eq9}
+\int\limits_{IJ}{\vec{\mathpzc{F}}\cdot {{{\vec{n}}}_{IJ}}d\text{s}}=-\int\limits_{IJ}{\utilde{K}_{{\hat{L}}}^{{}}\nabla u\cdot {{{\vec{n}}}_{IJ}}d\text{s}}=-\int\limits_{IJ}{\nabla u\cdot \utilde{K}_{{\hat{L}}}^\top{{{\vec{n}}}_{IJ}}d\text{s}}\quad\text{for each}\quad IJ\in \mathpzc{E}_{\hat{L}}
+\end{equation}
+
+In Euation \ref{eq9} the transpose of diffusion tensor is represented by $\utilde{K}_{\hat{L}}^\top$ . We approximate the term  $\nabla u\cdot\utilde{K}^\top_{\hat{L}}\vec{n}_{IJ}$ using the Taylor series expansion \cite{yuan2008monotone} on the auxiliary triangular regions showed in Fig. \ref{fig1}.
+
+\begin{figure}[!h]
+	\begin{center}		
+		\includegraphics[width=0.6\linewidth,angle=0]{FIGURE1.png}		
+		\caption{Some details of the MPFA-QL method: the physical-geometric parameters and the auxiliary trian-gular regions (yellow).}
+		\label{fig1}
+	\end{center}
+\end{figure}
+
+For instance, we consider the triangle $\Delta {{x}_{{\hat{L}}}}{{x}_{\hat{L},i(IJ)}}{{x}_{\hat{L},j(IJ)}}$  of the Fig. \ref{fig1}. For this triangle, the co-normal $\utilde{K}_{\hat{L}}^\top\vec{n}_{IJ}$  always can be written as a linear convex combination of ${{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}}$  and ${{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}$  since the control volume $\hat{L}$  is star-shaped, therefore, we can write:
+\begin{equation}\label{eq10}
+\utilde{K}_{{\hat{L}}}^\top{{\vec{n}}_{IJ}}={{\alpha }_{\hat{L},i(IJ)}}{{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}}+{{\alpha }_{\hat{L},j(IJ)}}{{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}
+\end{equation}
+where,
+\begin{equation}\label{eq11}
+{{\alpha }_{\hat{L},i(IJ)}}> 0, \quad {{\alpha }_{\hat{L},j(IJ)}}> 0 \quad \text{and} \quad {{\alpha }_{\hat{L},i(IJ)}}+ {{\alpha }_{\hat{L},j(IJ)}}> 0
+\end{equation}
+
+Equation \ref{eq10} (with Eq. \ref{eq11}) is also called, convex descomposition of the co-normal. This decomposition is necessary in constructing non-linear positive-preserving schemes (\cite{le2005finite}, \cite{lipnikov2007monotone}, \cite{yuan2008monotone},\cite{gao2013small}). The physical-geometric parameters in Eq. \ref{eq11} are calculated following a geometric procedure. In fact, we can write:
+\begin{equation}\label{eq12}
+| {{\alpha }_{\hat{L},j(IJ)}}|=\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|} 
+\end{equation}
+and
+\begin{equation}\label{eq12aux}
+ \sin \left( \theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2} \right)=\frac{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right|}
+\end{equation}
+where the angles $\theta_{\hat{L},IJ}^{1}$ and $\theta_{\hat{L},IJ}^{2}$  are represented in Fig. \ref{fig1} and the symbol ``$\times$'' denotes the vector product. From Eqs. \ref{eq12} and \ref{eq12aux}, we have:
+\begin{eqnarray}\label{eq13}
+\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|&=&\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{| {{\alpha }_{\hat{L},j(IJ)}}|} \nonumber\\
+&=&\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right|\sin \left( \theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2} \right)
+\end{eqnarray}
+
+We can also write:
+\begin{equation}\label{eq14}
+\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}} \right|\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}=\sin \left( \theta _{\hat{L},IJ}^{1} \right)
+\end{equation}
+
+After some algebraic manipulation of Eqs. \ref{eq13} and \ref{eq14}, we get: 
+\begin{equation}\label{eq15}
+{\alpha }_{\hat{L},j(IJ)}=\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}} \right|\sin \left( \theta _{\hat{L},IJ}^{1} \right)}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right|\sin \left( \theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2} \right)}
+\end{equation}
+where $| {{\alpha }_{\hat{L},j(IJ)}}|={{\alpha }_{\hat{L},j(IJ)}}> 0$ from the angles that satisfy the following conditions $0<\theta _{\hat{L},IJ}^{1}, \theta _{\hat{L},IJ}^{2} < \pi $ and $\theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2}< \pi $. Using a similar argument, we calculate the parameter ${{\alpha }_{\hat{L},i(IJ)}}$:
+\begin{equation}\label{eq16}
+{{\alpha }_{\hat{L},i(IJ)}}=\frac{\left| \utilde{K}_{{\hat{L}}}^\top{{{\vec{n}}}_{IJ}} \right|\sin (\theta _{\hat{L},IJ}^{2})}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|\sin (\theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2})}
+\end{equation}
+where $| {{\alpha }_{\hat{L},i(IJ)}} |={{\alpha }_{\hat{L},i(IJ)}}> 0$.
+
+Summing up, in the previous equations, the coefficients ${{\alpha }_{\hat{L},i(IJ)}}$, ${{\alpha }_{\hat{L},j(IJ)}}$  exist and are non-negative, therefore, ${{\alpha }_{\hat{L},i(IJ)}}+{{\alpha }_{\hat{L},j(IJ)}}> 0$. It is worth mentioning, that our scheme is not monotone, because non-negative coefficients is a necessary, but not sufficient condition to assure the monotone or extremum-preserving properties of this type of scheme (\cite{le2005finite}, \cite{lipnikov2007monotone}, \cite{yuan2008monotone},\cite{gao2013small}).
+
+\begin{figure}[!h]
+	%\vspace{-20pt}
+	\begin{center}		
+		\includegraphics[width=0.6\linewidth,angle=0]{FIGURE2.png}		
+		\caption{Representation of the one-sided fluxes, the unique flux and auxiliary variables.}
+		\label{fig2}
+	\end{center}
+\end{figure}
+
+Inserting Eq. \ref{eq10} into \ref{eq9}, we obtain the following equation:
+\begin{equation}\label{eq17}
+\int\limits_{IJ}{\vec{\mathpzc{F}}\cdot {{{\vec{n}}}_{IJ}}d\text{s}}=-\int\limits_{IJ}{\left( {{\alpha }_{\hat{L},i(IJ)}}\nabla u\cdot {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}}+{{\alpha }_{\hat{L},j(IJ)}}\nabla u\cdot {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right)d\text{s}}
+\end{equation}
+
+To construct the one-sided flux with respect to edge $IJ$ of the control volume $\hat{L}$  (see Fig. \ref{fig2}), as in \cite{yuan2008monotone} we use a local finite difference scheme to approximate the partial derivatives of $\nabla u$ along directions ${{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}}$ and ${{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}$, as shown in the following equation: 
+\begin{equation}\label{eq18}
+\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}=-\left| \overrightarrow{IJ} \right|\left( {{\alpha }_{\hat{L},i(IJ)}}\left( {{u}_{\hat{L},i(IJ)}}-{{u}_{{\hat{L}}}} \right)+{{\alpha }_{\hat{L},j(IJ)}}\left( {{u}_{\hat{L},j(IJ)}}-{{u}_{{\hat{L}}}} \right) \right)
+\end{equation}
+where $\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}=\int\limits_{IJ}{\vec{\mathpzc{F}}\cdot {{{\vec{n}}}_{IJ}}ds}$.
+
+In compact form, we can write:
+\begin{equation}\label{eq19}
+\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}=\left| \overrightarrow{IJ} \right|\left( {{\psi }_{\hat{L},IJ}}{{u}_{{\hat{L}}}}-\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}} \right)
+\end{equation}
+where ${{\psi }_{\hat{L},IJ}}={{\alpha }_{\hat{L},i(IJ)}}+{{\alpha }_{\hat{L},j(IJ)}}$ and ${{\psi }_{\hat{L},IJ}}>0$.
+
+Similarly, we calculate the one-sided flux with respect to control volume $\hat{R}$ as:
+\begin{equation}\label{eq20}
+\vec{\mathpzc{F}}_{IJ}^{{\hat{R}}}\cdot {{\vec{N}}_{JI}}=\left| \overrightarrow{IJ} \right|\left( {{\psi }_{\hat{R},IJ}}{{u}_{{\hat{R}}}}-\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}} \right)
+\end{equation}
+where ${{\psi }_{\hat{R},IJ}}={{\alpha }_{\hat{R},i(IJ)}}+{{\alpha }_{\hat{R},j(IJ)}}$ and ${{\psi }_{\hat{R},IJ}}>0$. 
+
+In Equations \ref{eq19} and \ref{eq20}, the one sided fluxes depend on auxiliary variables denoted by $u_{\hat{R},\gamma(IJ)}$  and $u_{\hat{L},\gamma(IJ)}$ which do not necessarily belong to the edge $IJ$ in question, see Fig. \ref{fig2}.
+
+\subsubsection{Construction of the unique flux over the edge}
+
+In order to construct a conservative scheme, we use the one-side fluxes defined in Eqs.  \ref{eq19} and \ref{eq20} to determine the unique flux on the edge $IJ$. Therefore, considering flux continuity on the edge $IJ$ given in Eq. \ref{eq8}, we can write:
+ \begin{equation}\label{eq20aux1}
+{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}=\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}=-\vec{\mathpzc{F}}_{IJ}^{{\hat{R}}}\cdot {{\vec{N}}_{JI}}
+\end{equation}
+  
+On the other hand, from Eq. \ref{eq19} and replacing Eq. \ref{eq20} into \ref{eq20aux1} we get:
+\begin{equation}\label{eq19aux1}
+ \frac{1}{{{\psi }_{\hat{L},IJ}}}\vec{\mathpzc{F}}_{IJ}\cdot {{\vec{N}}_{IJ}}=\left| \overrightarrow{IJ} \right|\left( {{u}_{{\hat{L}}}}-\frac{1}{{{\psi }_{\hat{L},IJ}}}\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}} \right)
+\end{equation}
+and 
+\begin{equation}\label{eq20aux2}
+ \frac{1}{{{\psi }_{\hat{R},IJ}}}\vec{\mathpzc{F}}_{IJ}\cdot {{\vec{N}}_{JI}}=-\left| \overrightarrow{IJ} \right|\left( {{u}_{{\hat{R}}}}-\frac{1}{{{\psi }_{\hat{R},IJ}}}\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}} \right)
+\end{equation}
+
+Adding Eqs. \ref{eq19aux1} and \ref{eq20aux2} and after some algebraic manipulations, we obtain the unique flux on edge $IJ$, as:
+\begin{equation}\label{eq21}
+{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}={{w}_{\hat{R},IJ}}\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}-{{w}_{\hat{L},IJ}}\vec{\mathpzc{F}}_{IJ}^{{\hat{R}}}\cdot {{\vec{N}}_{JI}}
+\end{equation}
+where the two positive weights, $w_{\hat{L},IJ}$ and $w_{\hat{R},IJ}$ are given as follows:
+\begin{equation}\label{eq22}
+{{w}_{\hat{R},IJ}}=\frac{{{\psi }_{\hat{R},IJ}}}{{{\psi }_{\hat{L},IJ}}+{{\psi }_{\hat{R},IJ}}}\quad \text{and}\quad {{w}_{\hat{L},IJ}}=\frac{{{\psi }_{\hat{L},IJ}}}{{{\psi }_{\hat{L},IJ}}+{{\psi }_{\hat{R},IJ}}}
+\end{equation}
+CONTINUE...
+\subsubsection{Treatment of boundary fluxes}
+For edges $(IJ)$ over boundaries ${{\Gamma }_{D}}\subset {{\mathpzc{E}}_{{\hat{L}}}}\cap {{\mathpzc{E}}^{ext}}$  with prescribed scalar variable (Dirichlet boundary conditions) and considering Eq. \ref{eq18}, we have:
+\begin{equation}\label{eq23}
+\vec{\mathpzc{F}}_{IJ}^{{}}\cdot {{\vec{N}}_{IJ}}=\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}=\left| \overrightarrow{IJ} \right|\left( {{\psi }_{\hat{L},IJ}}{{u}_{{\hat{L}}}}-\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}{{u}_{\hat{L},\gamma (IJ)}}}\right) 
+\end{equation}
+
+Now for edges $(IJ)$ over boundaries ${{\Gamma }_{N}}\subset {{\mathpzc{E}}_{{\hat{L}}}}\cap {{\mathpzc{E}}^{ext}}$  with imposed fluxes (Neumann boundary conditions) and again, considering Eq. \ref{eq18}, we can write:
+\begin{equation}\label{eq24}
+{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}=-{{\bar{g}}_{N,IJ}}\left| \overrightarrow{IJ} \right|
+\end{equation}
+in which the normal flux on ${{\Gamma }_{N}}$  is given by the mean value ${{\bar{g}}_{N,IJ}}$.
+
+\subsubsection{Approximation of node-unknowns}
+As previously mentioned, the scalar unknowns on mesh vertices can be written as linear weighted combinations of the neighboring cell-centered unknowns, so that the MPFA-QL scheme becomes a fully cell-centered finite volume formulation. In the present work, we used the explicit weight proposed in \cite{gao2011linearity} and used in (\cite{queiroz2014accuracy},\cite{contreras2016cell}). This weight is called ``explicit'', to indicate {\color{orange}that it is} computed with no need to solve a set of local system of equations such as in others classic MPFA methods (\cite{aavatsmark1998discretization},\cite{edwards1998finite}). Other authors have proposed various ways to calculate the interpolation weights (\cite{huang1998study}, \cite{basko2009efficient},\cite{wu2005linearly}), but, as pointed out by Gao an Wu \cite{gao2011linearity}, in general, these interpolations are not very robust in treating anisotropic and heterogeneous (possibly discontinuous) media. However, adopting the Linearity-Preserving Explicit Weighted (LPEW) interpolation, the explicit weight in Eq. \ref{eq25} is derived using the continuity equation throughout the auxiliary volumes or ``interaction regions'' built around each mesh vertex, by connecting the midpoints of adjacent mesh edges, as shown in Fig. \ref{fig4general}.
+
+In this case, a general vertex ($I$) unknown can be expressed as:
+\begin{equation}\label{eq25}
+{{u}_{I}}=\sum\limits_{\hat{i}=1}^{ncv}{{{w}_{{\hat{i}}}}{{u}_{{\hat{i}}}}},
+\end{equation}
+where  $w_{\hat{i}}$ is the weight assigned to each control volume $\hat{i}$, $ncv$ is the number of control volume surrounding node $I$, and:
+\begin{equation}\label{eq26}
+{{w}_{{\hat{i}}}}={{{{\bar{\varpi }}}_{{\hat{i}}}}}/{\sum\limits_{\hat{i}=1}^{ncv}{{{{\bar{\varpi }}}_{{\hat{i}}}}}}
+\end{equation}
+ 
+\begin{figure}[!h]
+	\begin{center}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE5.png}	
+		\caption{Left: geometric entities to build LPEW interpolation and Right: represent the first stage (arrow blue) and the second stage (arrow yellow) to calculate the fluxes in the half-edge $I\bar{M}_{\hat{i}}$ and edge $\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}$, respectively.}
+		\label{fig4general}
+	\end{center}
+\end{figure}  
+
+{\color{orange}In Equation \ref{eq26}, the coefficients $\bar{\varpi }_{{\hat{i}}}$  are determined in two stages. In effect, the first stage is to build the fluxes on the half-edge $I\bar{M}_{\hat{i}}$ using the triangle $\triangle I\bar{M}_{\hat{i}}x_{\hat{i}}$ (see Fig. \ref{fig4general}), therefore:}
+\begin{equation}\label{eqA00}
+\vec{\mathpzc{F}}_{I\bar{M}_{\hat{i}}}^{{\hat{i}}}\cdot \vec{N}_{I\bar{M}_{\hat{i}}}=K_{\hat{i},1}^{(n)}\eta_{\hat{i},1}(u_{\hat{i}}-u_{I})-(K_{\hat{i},1}^{(t)}+\cot (\theta_{\hat{i}}^{1})K_{\hat{i},1}^{(n)})(\bar{u}_{\hat{i}}-u_{I})
+\end{equation}
+{\color{orange}and the flux on the edge $\bar{M}_{\hat{i}}I$, using the triangle $\triangle x_{\hat{i}-1}\bar{M}_{\hat{i}}I$, is given by:} 
+\begin{equation}\label{eqA000}
+\vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}I}^{{\hat{i}-1}}\cdot \vec{N}_{\bar{M}_{\hat{i}}I}=K_{\hat{i}-1,2}^{(n)}\eta_{\hat{i}-1,2}(u_{\hat{i}-1}-u_{I})+(K_{\hat{i}-1,2}^{(t)}-\cot (\theta_{\hat{i}-1}^{2})K_{\hat{i}-1,2}^{(n)})(\bar{u}_{\hat{i}}-u_{I})
+\end{equation}
+	
+{\color{orange}By imposing flux continuity on the half-edge $I\bar{M}_{\hat{i}} $, we obtain the following expression:}
+\begin{equation}\label{eqA0}
+\bar{u}_{\hat{i}}-u_{I}=\frac{K_{\hat{i},1}^{(n)}\eta_{\hat{i},1}(u_{\hat{i}}-u_{I})+K_{\hat{i}-1,2}^{(n)}\eta_{\hat{i},2}(u_{\hat{i}-1}-u_{I})}{K_{\hat{i}-1,2}^{(n)}\cot(\theta_{\hat{i}-1}^{2})+ K_{\hat{i},1}^{(n)}\cot(\theta_{\hat{i}}^{1})-K_{\hat{i}-1,2}^{(t)}+K_{\hat{i},1}^{(t)}}
+\end{equation}
+{\color{orange}where  ${\eta }_{\hat{i},1}$ and ${\eta }_{\hat{i},2}$ are given by:}
+\begin{equation}\label{eqA2}
+{{\eta }_{\hat{i},1}}={\left| \overrightarrow{I{{{\bar{M}}}_{i}}} \right|}/{h_{IJ}}\;\text{,  }{{\eta }_{\hat{i},2}}={\left| \overrightarrow{I{{{\bar{M}}}_{i+1}}} \right|}/h_{IJ+1}
+\end{equation}
+
+{\color{orange}At this first stage, we have obtained $ncv$ equations for each $\bar{u}_{\hat{i}}$. Therefore, the second stage consist in eliminating all the intermediate unknowns (in this case $\bar{u}_{\hat{i}}$), then we consider a mass balance in the auxiliary region (yellow region in Fig. \ref{fig4general})}:
+\begin{equation}\label{eqA001}
+\sum_{i=1}^{ncv}\vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}^{{\hat{i}}}\cdot \vec{N}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}=0
+\end{equation}	
+{\color{orange}where the flux $\vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}^{{\hat{i}}}\cdot \vec{N}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}$ on the edge $\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}$ is derived considering the triangle $\triangle I\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}$, so we have:}
+\begin{equation}\label{eqA0001}
+\vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}^{{\hat{i}}}\cdot \vec{N}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}=(\bar{K}_{\hat{i}}^{(t)}-\bar{K}_{\hat{i}}^{(n)}\cot (\vartheta_{\hat{i}}^{2}))(\bar{u}_{\hat{i}}-u_{I})-(\bar{K}_{\hat{i}}^{(t)}+\bar{K}_{\hat{i}}^{(n)}\cot (\vartheta_{\hat{i}}^{1}))(\bar{u}_{\hat{i}+1}-u_{I}) 
+\end{equation}	
+{\color{orange}where  ${{\vec{N}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}}$ represents the area vector to the edge ${\bar{M}_{\hat{i}}}{\bar{M}_{\hat{i}+1}}$.}
+
+{\color{orange}By substituting Eq. \ref{eqA0001} in Eq. \ref{eqA001}, we obtain the following expression:}
+\begin{equation}\label{eqA01}
+\sum_{i=1}^{ncv}\left[ \overline{K}_{\hat{i}-1}^{(t)} -\overline{K}_{\hat{i}-1}^{(n)}\cot (\vartheta_{\hat{i}-1}^{1})+\overline{K}_{\hat{i}}^{(n)}\cot (\vartheta_{\hat{i}}^{2})\right](\bar{u}_{\hat{i}}-u_{I})=0 
+\end{equation}
+{\color{orange}where for each $\hat{i}=1,2,...,ncv$, we have:}
+\begin{equation}\label{eqA7}
+\overline{K}_{{\hat{i}}}^{\left( n \right)}={\left[ {{\left( {{{\vec{N}}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}} \right)}^\top}{\utilde{K}_{\hat{i}}}\left( {{{\vec{N}}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}} \right) \right]}/{{{\left| \overrightarrow{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}} \right|}^{2}}}
+\end{equation}
+\begin{equation}\label{eqA6}
+\overline{K}_{{\hat{i}}}^{\left( t \right)}={\left[ {{\left( {{{\vec{N}}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}} \right)}^\top}{\utilde{K}_{{\hat{i}}}}\left( \overrightarrow{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}} \right) \right]}/{{{\left| \overrightarrow{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}} \right|}^{2}}}
+\end{equation}
+{\color{orange}By substituting Eq. \ref{eqA0} into \ref{eqA01}, we get:}
+\begin{equation}\label{eqA02}
+\sum_{i=1}^{ncv}\bar{\varpi }_{\hat{i}}(u_{\hat{i}}-u_{I})=0\quad \text{with}\quad \bar{\varpi }_{{\hat{i}}}=K_{\hat{i},1}^{(n)}{{\eta }_{\hat{i},1}}\xi \left( {\hat{i}} \right)+\xi \left( \hat{i}+1 \right)K_{\hat{i},2}^{(n)}{{\eta }_{\hat{i},2}} 
+\end{equation}
+{\color{orange}and}
+\begin{equation}\label{eqA4}
+\xi\left( {\hat{i}} \right)=\frac{\overline{K}_{\hat{i}}^{(n)}\cot({\vartheta _{\hat{i}}^{2}})-\overline{K}_{\hat{i}}^{(t)}+\overline{K}_{\hat{i}-1}^{(n)}\cot({{\vartheta }_{\hat{i}-1}^{1}})+\overline{K}_{\hat{i}-1}^{(t)}}{K_{\hat{i}-1,2}^{(n)}\cot({{\theta }_{\hat{i}-1}^{2}})+K_{\hat{i},1}^{(n)}\cot({{\theta }_{\hat{i}}^{1}})-K_{\hat{i}-1,2}^{(t)}+K_{\hat{i},1}^{(t)}}
+\end{equation}
+{\color{orange}where}
+\begin{equation}\label{eqA3}
+K_{\hat{i},k}^{(t)}={\left[ {{\left( {\vec{N}_I\bar{M}_{\zeta }} \right)}^\top}{{{\utilde{K}}}_{{\hat{i}}}}\left( \overrightarrow{I{{{\bar{M}}}_{\zeta }}} \right) \right]}/{{{\left| \overrightarrow{I{{{\bar{M}}}_{\zeta }}} \right|}^{2}}}\;,\text{ }K_{\hat{i},k}^{(n)}={\left[ {{\left( {{{\vec{N}}}_{I{{{\bar{M}}}_{\zeta }}}} \right)}^\top}{{{\utilde{K}}}_{{\hat{i}}}}\left( {{{\vec{N}}}_{I{{{\bar{M}}}_{\zeta }}}} \right) \right]}/{{{\left| \overrightarrow{I{{{\bar{M}}}_{\zeta }}} \right|}^{2}}}
+\end{equation}
+{\color{orange}here $\zeta=\hat{i}+k-1$ and $k=1,2$.}
+
+{\color{orange}The physical-geometric parameters $\overline{K}_{{\hat{i}}}^{\left( n \right)}$, $\overline{K}_{{\hat{i}}}^{\left( t \right)}$, $K_{\hat{i},k}^{(n)},\,\,K_{\hat{i},k}^{(t)}$ and $\xi\left( {\hat{i}} \right)$ are computed during the preprocessing stage. Further details of the LPEW interpolation can be found in (\cite{gao2011linearity}, \cite{queiroz2014accuracy}, \cite{contreras2016cell}).}
+
+\section{Numerical experiments}\label{results}
+
+In this section, we present some numerical examples to show the robustness and accuracy of our scheme. First, we briefly define the discrete $L_{2}$-norm to evaluate approximation errors (\cite{queiroz2014accuracy}, \cite{aavatsmark2008compact}, \cite{gao2011linearity}, \cite{terekhov2017cell}). For instance, for the solution $u$, we use the following norm:
+\begin{equation}\label{eq27}
+{{\varepsilon }_{u}}={\left(  \frac{\sum\limits_{\hat{L}\in \mathpzc{M}}{{{\left( u({{{\vec{x}}}_{{\hat{L}}}})-{{u}_{{\hat{L}}}} \right)}^{2}}{V_{{\hat{L}}}}}}{{\sum\limits_{\hat{L}\in \mathpzc{M}}{{{V}_{{\hat{L}}}}}}} \right)}^{\frac{1}{2}}
+\end{equation}
+where  $u(\vec{x}_{\hat{L}})$ is the analytical solution evaluated on the barycenter ($\vec{x}_{\hat{L}}$ ) of the control volume $\hat{L}$ and for the flux, we use:
+\begin{equation}\label{eq28}
+{{\varepsilon }_{\mathpzc{F}}}=\left( \frac{\sum\limits_{IJ\in \mathpzc{E}}{{{{\left( (\vec{\mathpzc{F}}_{n}({\vec{x}}_{IJ})-\vec{\mathpzc{F}}_{IJ})\cdot \vec{n}_{IJ} \right)}^{2}}{{A}_{IJ}}}}}{{\sum\limits_{IJ\in \mathpzc{E}}{{{A}_{IJ}}}}}\right)^{\frac{1}{2}}
+\end{equation}
+where the analytical flux on the middle point ($\vec{x}_{IJ}$) of the edge $IJ$ is defined by \linebreak ${{\vec{\mathpzc{F}}}_{n}}(\vec{x}_{IJ})=-\utilde{K}\nabla u(\vec{x}_{IJ})$ and $A_{IJ}$ is a representative area associated with the edge $IJ$, more precisely, it is the sum of the areas of the CVs sharing the edge $IJ$. 
+
+Now the numerical convergence rates ${{R}_{\gamma }}\left( \gamma =u,\mathpzc{F} \right)$  are obtained by the following expression:
+\begin{equation}\label{eq29}
+{{R}_{\gamma }}=\frac{\log \left( {{{\varepsilon }_{\gamma }}({{h}_{2}})}/{{{\varepsilon }_{\gamma }}({{h}_{1}})}\; \right)}{\log \left( {{{h}_{2}}}/{{{h}_{1}}}\; \right)}
+\end{equation}
+where $h_{1}$  and $h_{2}$  denote the mesh sizes of two successive meshes ${{\varepsilon }_{\gamma }}({{h}_{1}})$ and ${{\varepsilon }_{\gamma }}({{h}_{2}})$  are the corresponding $L_{2}$-norms of the errors (\cite{queiroz2014accuracy}, \cite{aavatsmark2008compact}, \cite{gao2011linearity}, \cite{terekhov2017cell}).
+
+The maximum and the minimum values of the scalar field are calculated using the following relation ${{u}_{\max }}=\underset{\hat{L}\in \mathcal{M}}{\mathop{\max }}\,\left\{ {{u}_{{\hat{L}}}} \right\}$  and ${{u}_{\min }}=\underset{\hat{L}\in \mathcal{M}}{\mathop{\min }}\,\left\{ {{u}_{{\hat{L}}}} \right\}$ , respectively.
+
+\subsection{Linearity-preserving verification: oblique drain}
+This problem was adapted from Herbin and Hubert \cite{herbin2008benchmark} and {\color{orange}it is} used to show that the MPFA-QL reproduces piecewise linear solutions exactly, even for heterogeneous and anisotropic media. The domain is defined as:
+\begin{equation}\label{eq30}
+\begin{aligned}
+\Omega_{1}&=\left\lbrace \vec{x}\in \Omega \quad\text{such that:}\quad \psi_{1}(\vec{x})< 0 \right\rbrace\\
+\Omega_{2}&=\left\lbrace \vec{x}\in \Omega \quad\text{such that:}\quad \psi_{1}(\vec{x})> 0,\quad \psi_{2}(\vec{x})< 0  \right\rbrace\\
+\Omega_{3}&=\left\lbrace \vec{x}\in \Omega \quad\text{such that:}\quad \psi_{2}(\vec{x})> 0 \right\rbrace
+\end{aligned} \quad \text{and}\quad \Omega=\Omega_{1}\cup\Omega_{2}\cup\Omega_{3}
+\end{equation}
+where  ${{\psi }_{1}}(\vec{x})=y-0.2(x-0.5)-0.475$, ${{\psi }_{2}}(\vec{x})={{\psi }_{1}}(\vec{x})-0.05$ and $\vec{x}=(x,y)\in \Omega $. In this problem, we consider a configuration for which the analytical solution is given by $u(\vec{x})=2-x-0.2y$  and the solution profile is depicted in Fig. \ref{fig:fig4c}.
+
+Non-homogeneous Dirichlet boundary conditions are given by: \linebreak ${{g}_{D}}(\vec{x})=2-x-0.2y$  for $\vec{x}=(x,y)\in \partial \Omega $ and the heterogeneous diffusion tensor is given by:
+\begin{equation}\label{eq31}
+\utilde{K}\left( {\vec{x}} \right)={{\mathcal{R}}_{\theta }}\left( \begin{matrix}
+\alpha  & 0  \\
+0 & \beta   \\
+\end{matrix} \right)\mathcal{R}_{\theta }^{-1} \quad\text{and}\quad \theta =\arctan \left( 0.2 \right)
+\end{equation}
+where ${{\mathcal{R}}_{\theta }}$ is rotation matrix, $\alpha=100$, $\beta=10$ on $\Omega_{2}$ and $\alpha=1$, $\beta=0.1$ on $\Omega_{1}\cup\Omega_{3}$ .
+
+According to Herbin and Hubert \cite{herbin2008benchmark}, this problem represents a situation encountered in underground flow engineering where an oblique drain consisting in a very permeable layer concentrates most part of the flow{\color{orange}. This} drain is meshed with only one layer of cells, see Fig. \ref{fig:fig4b}. We discretize the domain using an oblique mesh (see Fig. \ref{fig:fig4a}), and we have obtained the following errors ${{\varepsilon }_{u}}=$8.52e-16 and ${{\varepsilon }_{\mathpzc{F}}}=$1.02e-13  showing that the MPFA-QL scheme is linearity-preserving.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=0.85\linewidth,angle=0]{FIGURE6.jpeg}
+		\caption{}
+		\label{fig:fig4a}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE7.jpeg}
+		\caption{}
+		\label{fig:fig4b}
+	\end{subfigure}
+	~ ~
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE8.jpeg}
+		\caption{}
+		\label{fig:fig4c}
+	\end{subfigure}
+	\caption{(a) Oblique mesh, (b) discontinuous diffusion tensor (blue region {\color{orange}stands for} $\Omega_{1}\cap\Omega_{3}$  and red region {\color{orange}stands for} $\Omega_{2}$) and (c) the exact solution.}
+	\label{fig:fig4}
+\end{figure}
+
+\subsection{Convergence test: heterogeneous rotating anisotropy}
+This problem was adapted from Sheng and Yuan \cite{sheng2016new} and consists in a square domain of dimensions ${{\left[ 0,1 \right]}^{2}}$  with a diffusion tensor that varies as a function of the position {\color{orange}and} defined by:
+\begin{figure}[!ht]
+	%\vspace{-20pt}
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE9.jpeg}
+		\caption{}
+		\label{fig:fig5a}
+	\end{subfigure}
+	~~~~~ 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE10.jpeg}
+		\caption{}
+		\label{fig:fig5b}
+	\end{subfigure}
+	
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE11.jpeg}
+		\caption{}
+		\label{fig:fig5c}
+	\end{subfigure}
+	~~~~~
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE12.jpeg}
+		\caption{}
+		\label{fig:fig5d}
+	\end{subfigure}
+	\caption{Samples of the meshes used for simulations: (a) Slightly distorted triangular mesh with 200 {\color{orange}CVs}, (b) Slightly distorted quadrilateral mesh with 100 {\color{orange}CVs}, (c) Kershaw triangular mesh with 1,152 {\color{orange}CVs} and (d) Kershaw quadrilateral mesh with 576 {\color{orange}CVs}.}
+	\label{fig:fig5}
+\end{figure}
+\begin{equation}\label{eq32}
+\utilde{K}(\vec{x})={{\mathcal{R}}_{\theta }}\left( \begin{matrix}
+{{k}_{1}}(\vec{x}) & 0  \\
+0 & {{k}_{2}}(\vec{x})  \\
+\end{matrix} \right)\mathcal{R}_{\theta }^{-1} \quad\text{with}\quad \theta ={5\pi }/{12}
+\end{equation}
+where ${{k}_{1}}(\vec{x})=1+2{{x}^{2}}+{{y}^{2}}$ and  ${{k}_{2}}(\vec{x})=1+{{x}^{2}}+2{{y}^{2}}$. The analytical solution of the problem is given by:
+\begin{equation}\label{eq33}
+u(\vec{x})=\sin (\pi x)\sin (\pi y)
+\end{equation}
+and Dirichlet boundary conditions are directly obtained by imposing the analytical solution over the boundaries. 
+
+In order to evaluate if there is any loss of converge rates of the MPFA-QL, we also consider a set of distorted meshes, as shown in Fig. \ref{fig:fig5}. In addition, we compare our results with {\color{orange}other} MPFA schemes available in literature, namely the MPFA-O \cite{aavatsmark2002introduction} and MPFA-FPS \cite{edwards2008quasi}. In Tables \ref{tab1}, \ref{tab2}, \ref{tab3} and \ref{tab4}, we present the errors and rates of convergence for a sequence of successively refined meshes.
+
+Tables \ref{tab1} and \ref{tab2} give the errors and convergence rates of the MPFA-QL, the MPFA-O and the MPFA-FPS schemes on the slightly distorted triangular and quadrilateral meshes (Figs. \ref{fig:fig5a} and \ref{fig:fig5b}). From these tables, it can be seen, that our scheme (MPFA-QL) and the classical schemes (MPFA-O and MPFA-FPS) obtain almost second order accuracy for the solution and greater that 1.8 accuracy for the flux. For these relatively well behaved meshes, in general, the MPFA-QL performs slightly worse than the MPFA-O and the MPFA-FPS in terms of accuracy for the scalar field even, though it is clear that all methods produce very close solutions.
+
+{\color{orange}For the slightly distorted structured quadrilateral mesh (see Fig. \ref{fig:fig5b}), we can see that the MPFA-QL and other MPFA schemes (e.g. MPFA-O, MPFA-FPS, MPFA-D and SLPS) have the same stencil as we show in Fig. \ref{fig71}. On the other hand, when we test our scheme using a highly distorted structured quadrilateral mesh (Kershaw), we can see that the MPFA-QL has a non-local stencil with a larger number of control volumes as shown in Fig. \ref{fig72}}.
+
+In Tables \ref{tab3} and \ref{tab4}, we present the results for the triangular and quadrilateral {\color{orange}highly distorted} Kershaw meshes. In this case, {\color{orange}in general, the MPFA-QL is slightly better than the MPFA-O and the MPFA-FPS, therefore we observe that the convergence rate of our scheme (MPFA-QL) for the scalar variable gets close to 2 for the scalar variable and close to {\color{orange}1.65} for the flux as the number of cells is increased}. {\color{orange}For the triangular Kershaw meshes analyzed, the MPFA-QL has larger absolute errors for the scalar variable than both, the MPFA-O and the MPFA-FPS, even though it presents better convergence rates. On the other hand, for fluxes, the MPFA-QL has smaller absolute errors and larger convergence rates than the MPFA-O and the MPFA-FPS for all meshes analyzed except the error for the mesh with 18,432 control volumes where the MPFA-O presents smaller absolute error than the other two schemes}. For the quadrilateral Kershaw meshes, the MPFA-O produces more accurate results than the MPFA-QL and the MPFA-FPS {\color{orange}methods,} even though all methods behave well for this problem.
+\begin{figure}[!ht]
+	\begin{center}		
+		\includegraphics[width=0.55\linewidth,angle=0]{FIGURE13.png}		
+		\caption{Left: Structured and slightly distorted quadrilateral mesh with 100 CVs and Right: stencil of a particular control volume for the MPFA-QL and other classical MPFA schemes (e.g. MPFA-O, MPFA-FPS, MPFA-D and SLPS).}
+		\label{fig71}
+	\end{center}
+\end{figure}
+\begin{figure}[!h]
+	\vspace{-20pt}
+	\begin{center}	
+			
+		\includegraphics[width=0.75\linewidth,angle=0]{FIGURE14.png}		
+		\caption{Left: Structured distorted quadrilateral mesh (Kershaw) with 576 CVs, Center: excerpt of the mesh showing the stencil used by the MPFA-QL scheme  and Right: excerpt of the mesh showing the stencil for other MPFA schemes (e.g. MPFA-O, MPFA-FPS, MPFA-D and SLPS).}
+		\label{fig72}
+	\end{center}
+\end{figure}
+ 
+\begin{table}[!ht]
+	%\vspace{-20pt}
+	\caption{Comparison of errors and convergence rates on slightly distorted triangular mesh (Fig. \ref{fig:fig5a}).}
+	\label{tab1}
+	
+	\centering
+	
+	\begin{tabular}{c c c c c c c}
+		\hline
+		\# CVs & & $200$  & $800$  & $3,200$               & $12,800$             & $51,200$\\ 
+		\hline
+		\multirow{4}{*}{MPFA-QL} 
+		& $\varepsilon_{u}$    & 0.009   & 0.002  & 5.52e-4& 1.38e-04     &3.77e-05\\
+		& $R_{u}$              & $--$    & 2.08   & 1.99   & 2.007        & 1.87\\
+		&$\varepsilon_{\mathpzc{F}}$     & 0.07   & 0.02   & 0.005        & 0.001               &3.21e-04\\ 
+		& $R_{\mathpzc{F}}$              & $--$   & 1.88   & 1.94         & 2.03               &1.89\\
+		\hline
+		\multirow{4}{*}{MPFA-O} 
+		& $\varepsilon_{u}$    & 0.005 & 0.001  & 3.29e-04  & 7.77e-05 &1.90e-05\\
+		& $R_{u}$              & $--$   & 1.97   & 1.98     & 2.08    &2.03\\
+		&$\varepsilon_{\mathpzc{F}}$   & 0.09   & 0.03      & 0.007    & 0.002 &5.44e-04\\ 
+		& $R_{\mathpzc{F}}$            & $--$    & 1.78     & 1.86    & 1.89   &1.88\\
+		\hline
+		\multirow{4}{*}{MPFA-FPS} 
+		& $\varepsilon_{u}$    & 0.009 & 0.002  & 5.31e-04 & 1.30e-04&3.34e-05\\
+		& $R_{u}$              & $--$   & 2.08   & 1.98     & 2.03    &1.97\\
+		&$\varepsilon_{\mathpzc{F}}$   & 0.06   & 0.02     & 0.005   & 0.001               &3.09e-04\\ 
+		& $R_{\mathpzc{F}}$            & $--$    & 1.91     & 1.96    & 2.03               &1.83\\
+		\hline
+	\end{tabular}
+\end{table}
+\begin{table}[!h]
+	\vspace{-5pt}
+	\caption{Comparison of errors and convergence rates on slightly distorted quadrilateral mesh (Fig. \ref{fig:fig5b}).}
+	\label{tab2}	
+	\centering
+	\begin{tabular}{ c c c c c c c}
+		\hline
+		\# CVs & & $100$  & $400$  & $1,600$               & $6,400$             & $25,600$\\ 
+		\hline
+		\multirow{4}{*}{MPFA-QL} 
+		& $\varepsilon_{u}$    & 0.01 & 0.003  & 6.34e-04 & 1.55e-04&3.76e-05\\
+		& $R_{u}$              & $--$  & 2.00   & 1.98                & 2.03               & 2.04\\
+		&$\varepsilon_{\mathpzc{F}}$  & 0.09   & 0.026 & 0.01                & 0.002               &5.27e-04\\ 
+		& $R_{\mathpzc{F}}$           & $--$    & 1.83  & 1.9                & 1.88              &1.85\\
+		\hline
+		\multirow{4}{*}{MPFA-O} 
+		& $\varepsilon_{u}$    & 0.008 & 0.002 & 5.22e-4 & 1.21e-04 &2.3e-05\\
+		& $R_{u}$              & $--$   & 2.03  & 2.01               & 2.11               &2.39\\
+		&$\varepsilon_{\mathpzc{F}}$   & 0.06  & 0.02 & 0.004       & 9.44e-04&2.33e-04\\ 
+		& $R_{\mathpzc{F}}$            & $--$   & 1.98 & 2.01               & 2.01               &2.08\\
+		\hline
+		\multirow{4}{*}{MPFA-FPS} 
+		& $\varepsilon_{u}$    & 0.01 & 0.003   & 6.29e-04 & 1.53e-04&3.61e-05\\
+		& $R_{u}$              & $--$  & 1.98  & 1.99                & 2.04               &2.08\\
+		&$\varepsilon_{\mathpzc{F}}$  & 0.10 & 0.03    & 0.007                & 0.002               &4.95e-04\\ 
+		& $R_{\mathpzc{F}}$           & $--$  & 1.95  & 1.96                & 1.94               &1.86\\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[!ht]
+	\vspace{-20pt}
+	\caption{Comparison of errors and convergence rates on Kershaw triangular mesh (Fig. \ref{fig:fig5c}).}
+	\label{tab3}
+	\centering
+	\begin{tabular}{ c c c c c c c}
+		\hline
+		\# CVs & & $1,152$  & $4,608$  & $18,432$               & $73,728$  & $294,912$          \\ 
+		\hline
+		\multirow{4}{*}{MPFA-QL} 
+		& $\varepsilon_{u}$    & 0.035 & 0.016  & 0.005 & 0.0015&   3.93e-04  \\
+		& $R_{u}$              & $--$   & 1.18   & 1.60  & 1.79  &  1.93 \\
+		&$\varepsilon_{\mathpzc{F}}$   & 0.52   & 0.23  & 0.08  & 0.03& 0.008   \\ 
+		& $R_{\mathpzc{F}}$            & $--$    & 1.17  & 1.51  & 1.65&  1.63 \\
+		\hline
+		\multirow{4}{*}{MPFA-O} 
+		& $\varepsilon_{u}$    & 0.02   & 0.006 & 0.002 & 0.001&  6.85e-04    \\
+		& $R_{u}$              & $--$    & 1.66  & 1.37 & 1.22&  0.5   \\
+		&$\varepsilon_{\mathpzc{F}}$    & 0.27  & 0.11 & 0.03 & 0.07&  0.10   \\ 
+		& $R_{\mathpzc{F}}$             & $--$   & 1.33 & 1.23 & $-0.58$&  $-0.53$    \\
+		\hline
+		\multirow{4}{*}{MPFA-FPS} 
+		& $\varepsilon_{u}$    & 0.016 & 0.004  & 0.001 & 3.67e-04 &  1.41e-04  \\
+		& $R_{u}$              & $--$    & 2.11  & 1.77 & 1.55                &  1.38   \\
+		&$\varepsilon_{\mathpzc{F}}$     & 0.88 & 0.37  & 0.15 & 0.06                &  0.02   \\ 
+		& $R_{\mathpzc{F}}$              & $--$    & 1.24  & 1.31 & 1.32                &  1.33   \\
+		\hline
+	\end{tabular}
+\end{table}
+\begin{table}[!ht]
+	%\vspace{-20pt}
+	\caption{Comparison of errors and convergence rates on Kershaw quadrilateral mesh (Fig. \ref{fig:fig5d}).}
+	\label{tab4}
+	
+	\centering
+	
+	\begin{tabular}{c c c c c c c }
+		\hline
+		\# CVs & & $576$  & $2,304$  & $9,216$               & $36,864$  & $147,456$          \\ 
+		\hline
+		\multirow{4}{*}{MPFA-QL} 
+		& $\varepsilon_{u}$    & 0.03 & 0.013  & 0.004 & 0.001&   3.14e-04  \\
+		& $R_{u}$              & $--$    & 1.21 & 1.51  & 1.81&  1.93 \\
+		&$\varepsilon_{\mathpzc{F}}$     & 0.39 & 0.17 & 0.06  & 0.02& 0.01  \\ 
+		& $R_{\mathpzc{F}}$              & $--$    & 1.23 & 1.49  & 1.62&  1.64 \\
+		\hline
+		\multirow{4}{*}{MPFA-O} 
+		& $\varepsilon_{u}$    & 0.003 & 7.75e-04 & 5.61e-05 & 0.001&  2.36e-05   \\
+		& $R_{u}$              & $--$    & 1.96 & 1.96 & 1.83&  1.25   \\
+		&$\varepsilon_{\mathpzc{F}}$     & 0.035 & 0.009 & 0.0023 & 5.68e-04&  1.42e-04   \\ 
+		& $R_{\mathpzc{F}}$              & $--$    & 1.97 & 1.97 & 2.3&  1.99    \\
+		\hline
+		\multirow{4}{*}{MPFA-FPS} 
+		& $\varepsilon_{u}$    & 0.013 & 0.005 & 0.0015 & 3.87e-04 &  1.08e-04  \\
+		& $R_{u}$              & $--$    & 1.54  & 1.82 & 1.91                &  1.84  \\
+		&$\varepsilon_{\mathpzc{F}}$     & 0.18 & 0.06  & 0.02 & 0.006                &  0.002   \\ 
+		& $R_{\mathpzc{F}}$              & $--$    & 1.42  & 1.64 & 1.72                &  1.63   \\
+		\hline
+	\end{tabular}
+\end{table}
+%\newpage
+\subsection{Monotonicity test}
+The purpose of the following {\color{orange}three} problems is to verify possible violations of the Discrete Maximum Principle (DMP) (\cite{le2005finite},\cite{lipnikov2007monotone},\cite{gao2013small}). 
+
+\subsubsection{Oblique flow using boundary conditions with steep gradients}
+This problem was adapted from Gao and Wu \cite{gao2013small}. In this test, the main directions of an anisotropic diffusion tensor are tilted with respect to the boundary conditions and the mesh. The computational domain is a unit square ${{[0,1]}^{2}}$  , and the anisotropic diffusion tensor is given by:
+\begin{equation}\label{eq34}
+\utilde{K}(\vec{x})={{\mathcal{R}}_{\theta }}\left( \begin{matrix}
+1 & 0  \\
+0 & 1\text{e-}04  \\
+\end{matrix} \right)\mathcal{R}_{\theta }^{-1}
+\end{equation}
+where  $\mathcal{R}_{\theta }$ is the rotation matrix with angle $\theta ={{40}^{\circ }}$. The source term  $Q(\vec{x})=0$ for all $\vec{x}\in \Omega $. 
+
+Dirichlet boundary conditions are considered, $u={{g}_{D}}$  on $\partial\Omega$ , where $g_{D}$  is a piecewise linear function defined by:
+\begin{equation}\label{eq35}
+g_{D}=\begin{cases}
+1,& \quad\text{on} \quad (0,0.2)\times \{0\}\cup \{0\} \times (0,0.2)\\
+0,& \quad\text{on} \quad (0.8,1)\times \{1\}\cup \{1\} \times (0.8,1)\\
+0.5,& \quad\text{on} \quad (0.3,1)\times \{0\}\cup \{0\} \times (0.3,1)\\
+0.5,& \quad\text{on} \quad (0,0.7)\times \{1\}\cup \{1\} \times (0,0.7)\\ 
+\end{cases}
+\end{equation}
+
+To solve this problem, we consider {\color{orange}two} randomly disturbed meshes, {\color{orange}(see Fig. \ref{fig:fig6b})}. These meshes are constructed from structured uniform {\color{orange}meshes} by a random distortion of their nodal coordinates denoted by $x$ and $y$, and given as:
+\begin{equation}\label{eq36}
+x=x+\tau {{\xi }_{x}}h,\quad y=y+\tau {{\xi }_{y}}h
+\end{equation}
+where ${\xi }_{x}$ and ${\xi }_{y}$ are random variables with values that belong to $[-0.5, 0.5]$, $h$ is the original spacing of the mesh and $\tau \in [0,1]$  is the degree of distortion. 
+
+{\color{orange}In this case}, the maximum principle states that the exact solution should lie between 0 and 1 (Hopf's second lemma) \cite{hopf1952remark}, {\color{orange}and we compare our results with those of other five linear methods and the results of the non-linear SSEPS (Small Stencil and Extremum-Preserving Scheme) which was proposed by Gao and Wu \cite{gao2013small} and satifies the DMP}. 
+
+The numerical solution for the MPFA-QL is depicted in Figs. \ref{fig:fig7a} and \ref{fig:fig8a} for random triangular and quadrilateral meshes, respectively. In both cases, the MPFA-QL scheme provides satisfactory results honoring the DMP {\color{orange}for all levels of mesh refinements, see Tables \ref{tab5a} and  \ref{tab5b}}.
+
+\begin{figure}[!ht]
+	%	\vspace{-20pt}
+	%\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth,angle=0]{FIGURE15.jpeg}
+		\caption{}
+		\label{fig:fig6a}
+	\end{subfigure}
+	~
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth,angle=0]{FIGURE16.jpeg}
+		\caption{}
+		\label{fig:fig6b}
+	\end{subfigure}  
+	~
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE17.jpeg}
+		\caption{}
+		\label{fig:fig6c}
+	\end{subfigure}
+	\caption{(a) Random triangular mesh with 1,152 CVs , (b) random quadrilateral mesh with 576 CVs, both with $\tau=0.5$ and (c) reference solution obtained by SSEPS method on triangular mesh with 18,432 CVs.}
+	\label{fig:fig6}
+\end{figure}
+\begin{figure}[!h]
+	%\vspace{-20pt}
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE18.jpeg}
+		\caption{}
+		\label{fig:fig7a}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE19.jpeg}
+		\caption{}
+		\label{fig:fig7b}
+	\end{subfigure}
+	~
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE20.jpeg}
+		\caption{}
+		\label{fig:fig7c}
+	\end{subfigure}
+	\caption{Numerical solution profiles obtained on random triangular mesh with 4,608 CVs: (a) MPFA-QL, (b) MPFA-O and (c) MPFA-FPS. Pink color $u>0$ . White color $u<0$ .}
+	\label{fig:fig7}
+\end{figure}
+\begin{figure}[!h]
+	%\vspace{-5pt}	
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE21.jpeg}
+		\caption{}
+		\label{fig:fig8a}
+	\end{subfigure}
+	~ 
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE22.jpeg}
+		\caption{}
+		\label{fig:fig8b}
+	\end{subfigure}
+	~
+	\begin{subfigure}[b]{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE23.jpeg}
+		\caption{}
+		\label{fig:fig8c}
+	\end{subfigure}
+	\caption{Numerical solution profiles obtained on random quadrilateral mesh with 2,304 CVs: (a) MPFA-QL, (b) MPFA-O and (c) MPFA-FPS.}\label{fig:fig8}
+\end{figure}
+
+In Figure \ref{fig:fig7b} (random triangular mesh with {\color{orange}4,608 control volumes) and Tables \ref{tab5a} and \ref{tab5b}, we can see that three other MPFA methods also suffer spurious oscillations, violating the maximum principle, namely, the MPFA-O and MPFA-FPS and MPFA-D. On the other hand, the MPFA-QL and the SLPS, which are not monotone methods had a similar behavior to the non-linear SSEPS scheme}.
+
+\begin{table}[!ht]\label{tab5}
+	%\vspace{-20pt}
+	\centering
+	\caption{Oblique flow using boundary conditions with steep gradients: maximum and minimum values of the scalar field using random triangular mesh (a) and random quadrilateral mesh (b).}
+	\begin{subtable}{0.8\textwidth}
+	
+	\begin{tabular}{c c c c  | c c| c c }
+		\hline
+		\multicolumn{2}{c}{Scheme}
+		&  \multicolumn{2}{c}{ 1,152 CVs}
+		&  \multicolumn{2}{|c}{ 4,608 CVs}
+		&  \multicolumn{2}{|c}{18,432 CVs}\\
+		\cline{3-8}
+		&  & $u_{max}$ & $u_{min}$ & $u_{max}$ & $u_{min}$ & $u_{max}$ &  $u_{min}$ \\
+		\hline  
+		& MPFA-QL  &0.99 &0.01  &0.99  &0.003   &0.99 &0.001  \\
+		& MPFA-O   &{\color{blue!100}1.17} &${\color{blue!100}-0.19}$ &{\color{blue!100}1.09}  &${\color{blue!100}-0.11}$   &{\color{blue!100}1.06} &${\color{blue!100}-0.07}$   \\
+		& MPFA-FPS &{\color{blue!100}1.14} &${\color{blue!100}-0.08}$ &{\color{blue!100}1.09}  &${\color{blue!100}-0.06}$   &{\color{blue!100}1.03} &${\color{blue!100}-0.006}$  \\
+		& MPFA-D   &0.99 &0.01  &0.99  &0.002   &0.99 &0.001 \\
+		& SLPS   &0.99 &0.01  &0.99  &0.003   &0.99&0.002\\
+		& SSEPS    &0.99 & 0.01 &0.99  &0.004   & 0.99&0.002  \\	
+		\hline
+	\end{tabular}
+     \caption{}
+    \label{tab5a}
+\end{subtable}
+	%\centering
+	\begin{subtable}{0.8\textwidth}
+	
+	\begin{tabular}{c c c c  | c c| c c }
+		\hline
+		\multicolumn{2}{c}{Scheme}
+		&  \multicolumn{2}{c}{ 576 CVs}
+	    &  \multicolumn{2}{|c}{ 2,304 CVs}
+		&  \multicolumn{2}{|c}{9,216 CVs}\\
+		\cline{3-8}
+		&  & $u_{max}$ & $u_{min}$ & $u_{max}$ &  $u_{min}$& $u_{max}$ &  $u_{min}$ \\
+		\hline  
+		& MPFA-QL  &0.99 &0.013&0.99  &0.01   &0.99 &0.003\\
+		& MPFA-O   &0.99 &0.012&{\color{blue!100}1.03} &${\color{blue!100}-0.02}$  &{\color{blue!100}1.02} &${\color{blue!100}-0.03}$\\
+		& MPFA-FPS &0.98 &0.018&{\color{blue!100}1.08}  &${\color{blue!100}-0.08}$  &{\color{blue!100}1.09} &${\color{blue!100}-0.08}$\\
+		& MPFA-D   &{\color{blue!100}1.003}&0.014& {\color{blue!100}1.01} &0.01   &0.99 &0.003\\
+		& SLPS   &0.993&0.004& 0.99 & 0.003    &0.99 &0.001\\
+		& SSEPS    &0.99 &0.01 &0.99  &0.003  &0.99 &0.001  \\	
+		\hline	
+	\end{tabular}
+    \caption{}
+	\label{tab5b}
+   \end{subtable}
+  
+\end{table}
+ \newpage
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.3\linewidth,angle=0]{FIGURE24.jpg}	
+\caption{Distorted quadrilateral mesh with 289 CVs.}\label{fig:fig7aux1}
+\end{figure}
+\subsubsection{Heterogeneous rotating anisotropy media}
+{\color{orange}This test was adapted from \cite{agelas2008symmetric}. Again, the computational domain is a unit square, $\Omega=[0,1]^{2}$ where the diffusion tensor is a rotating anisotropic
+tensor:
+\begin{equation}\label{eq36aux2}
+\utilde{K}(x,y)=\frac{1}{x^{2}+y^{2}}\left(\begin{matrix}
+10^{3}x^{2}+y^{2} & (10^{3}-1)xy  \\
+(10^{3}-1)xy & x^{2}+10^{3}y^{2} \\
+\end{matrix} \right)
+\end{equation}
+and we consider the following smooth analytical solution $u(x,y)=\sin(\pi x)\sin(\pi y)$. Dirichlet boundary condition are obtained directly from the analytical solution. In Table \ref{tab7aux1}, we compare nine schemes, namely, MPFA-QL, MPFA-O, MPFA-FPS, SLPS, SSEPS, the method of \cite{eymard2007new} combined with the L type interpolation operator and refered to as ``SUCCES'', the MPFA-L scheme of \cite{aavatsmark2007convergence} and ``Symmetric'' scheme of \cite{agelas2008symmetric} for a sequence of successively refined meshes built from mesh shown in Fig.\ref{fig:fig7aux1}}. 
+
+\begin{table}[!h]
+	%\vspace{-20pt}
+	\centering
+	\caption{Heterogeneous rotating anisotropy media: maximum and minimum values of the potencial variable.}
+	\begin{tabular}{c c c c c c }
+		\hline
+		\multicolumn{1}{c}{Scheme}
+		&  \multicolumn{5}{c}{Control Volumes}\\
+		\cline{3-6}
+		&  &289& 1,156  & 4,624  & 18,496  \\
+		\hline 
+		\multirow{2}{*}{MPFA-QL }&$u_{min}$&{\color{blue!100}$-1.67$e-02}&{\color{blue!100}$-8.00$e-03}&{\color{blue!100}$-1.56$e-02}&{\color{blue!100}$-5.40$e-03}\\
+		&$u_{max}$&{\color{blue!100}1.39e+00}&8.99e-01&9.189e-01&9.524e-01\\
+		\hline
+		\multirow{2}{*}{MPFA-O}&$u_{min}$&{\color{blue!100}$-8.58$e-02}&{\color{blue!100}$-1.76$e-02}&{\color{blue!100}$-9.27$e-03}&{\color{blue!80}$-5.97$e-03} \\
+		& $u_{max}$&{\color{blue!100}2.39e+00}&{\color{blue!100}1.14e+00} &{\color{blue!100}1.04e+00}&{\color{blue!100}1.02e+00} \\
+		\hline
+		\multirow{2}{*}{MPFA-FPS}&$u_{min}$&{\color{blue!100}$-6.48$e-01}&{\color{blue!100}$-8.27$e-02}&{\color{blue!100}$-4.88$e-03}&{\color{blue!100}$-3.28$e-03} \\
+		& $u_{max}$&{\color{blue!100}3.19e+00}&9.81e-01&9.32e-01&9.66e-01 \\
+		\hline
+		\multirow{2}{*}{MPFA-D}&$u_{min}$   &{\color{blue!100}$-5.9$e-02} &{\color{blue!100}$-8.5$e-03} &{\color{blue!100}$-9.1$e-03}  &{\color{blue!100}$-1.33$e-02}\\
+		& $u_{max}$&1.00e+00 &8.98e-01 &9.33e-01  &9.66e-01 \\
+		\hline
+		\multirow{2}{*}{SLPS}&$u_{min}$&{\color{blue!100}$-3.59$e-02}&{\color{blue!100}$-4.65$e-02}&{\color{blue!100}$-6.59$e-02}&{\color{blue!100}$-6.49$e-01}\\
+		& $u_{max}$&6.74e-01&6.645e-01&6.98e-01&7.59e-01 \\
+		\hline
+		\multirow{2}{*}{SSEPS}&$u_{min}$&0&0&0& 0\\
+		& $u_{max}$&7.1e-01&7.3e-01&7.8e-01&8.4e-01 \\ 
+		% os valores zero neste para SSEPS, ja estavam dando negativo                      
+		\hline
+		\multirow{2}{*}{MPFA-L}&$u_{min}$&{\color{blue!100}$-8.20$e-01}&{\color{blue!100}$-3.56$e+02}&{\color{blue!100}-5.70e+03}&{\color{blue!100}$-3.47$e+03} \\
+		& $u_{max}$&{\color{blue!100}1.58e+00}&{\color{blue!100}3.35e+02}&{\color{blue!100}5.96e+03}&{\color{blue!100}3.52e+03} \\
+		\hline
+		\multirow{2}{*}{SUCCES}&$u_{min}$&{\color{blue!100}$-3.22$e-03}&{\color{blue!100}$-1.26$e-03}&{\color{blue!100}$-9.74$e-03}&{\color{blue!100}$-1.07$e-02} \\
+		& $u_{max}$&6.08e-01&7.26e-01&7.91e-01&8.34e-01 \\
+		\hline
+		\multirow{2}{*}{symmetric}&$u_{min}$&{\color{blue!100}$-1.01$e+00} &{\color{blue!100}$-2.92$e-01}&{\color{blue!100}$-1.38$e-01}&{\color{blue!100}$-7.70$e-02} \\
+		& $u_{max}$&9.97e-01&{\color{blue!100}1.03e+00}&{\color{blue!100}1.02e+00}&{\color{blue!100}1.01e+00} \\
+		\hline
+	\end{tabular}
+	\label{tab7aux1}
+\end{table}  
+{\color{orange}In Table \ref{tab7aux1} none of the schemes satisfy the DMP criterion on this test and meshes. Though, the values of the the MPFA-O, L and Symmetric schemes exceeds the maximum value 1, that not reduce with the successive refinement of the mesh. On the other hand, the MPFA-QL, FPS, D and SUCCES schemes produced very small negative values and that do not exceed the maximum value 1. In the other hand, the SLPS scheme did not reduce the negative values with the successive refinement of the meshes and the SSEPS scheme produced values between 0 and 1.}
+
+\subsubsection{Heterogeneous domain with a square hole and extremely anisotropic media}
+This problem was adapted from Queiroz et al. \cite{queiroz2014accuracy} and, again we test our method for a heterogeneous and extremely anisotropic medium. {\color{orange}For this example,} we consider a unitary square domain with an interior hole defined as:  $\Omega ={{{\left[ 0,1 \right]}^{2}}}/{{{\left[ {4}/{9,{5}/{9}\;}\; \right]}^{2}}}$  (see Fig. \ref{fig:fig9a}), and such that the boundary is the disjoint union of $\Gamma_{0}$  and $\Gamma_{1}$. Furthermore, we set $g_{D}=2$  on $\Gamma_{0}$  , $g_{D}=0$  on $\Gamma_{1}$ , $Q(\vec{x})=0$ and the diffusion tensor is given by:
+\begin{equation}\label{eq37}
+\utilde{K}(\vec{x})={{\mathcal{R}}_{\theta }}\left( \begin{matrix}
+100 & 0  \\
+0 & 0.01 \\
+\end{matrix} \right)\mathcal{R}_{\theta }^{-1}\quad\text{for}\quad \vec{x}=\left( x,y \right)\in {{\Omega }_{1}},\text{  }x\le 0.5
+\end{equation}
+and
+\begin{equation}\label{eq38}
+\utilde{K}(\vec{x})=\left( \begin{matrix}
+y_{1}^{2}+{{10}^{3}}x_{1}^{2} & -(1-{{10}^{3}}){{x}_{1}}{{y}_{1}}  \\
+-(1-{{10}^{3}}){{x}_{1}}{{y}_{1}} & x_{1}^{2}+{{10}^{3}}y_{1}^{2}  \\
+\end{matrix} \right)\quad\text{for}\quad \vec{x}=\left( x,y \right)\in {{\Omega }_{2}},\text{  }x> 0.5
+\end{equation}
+where $\theta ={\pi }/{2}$, ${{x}_{1}}=x+{{10}^{-3}}$ and ${{y}_{1}}=y+{{10}^{-3}}$.
+
+\begin{figure}[!ht]
+	
+	\centering
+	\begin{subfigure}[b]{0.3\textwidth}
+		% 1.08
+		\includegraphics[width=1.06\linewidth,angle=0]{FIGURE25.jpg}
+		\caption{}
+		\label{fig:fig9a}
+	\end{subfigure}
+	~~~~~
+	\begin{subfigure}[b]{0.3\textwidth}
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE26.jpg}
+		\caption{}
+		\label{fig:fig9b}
+	\end{subfigure}
+	\caption{ (a) Sketch of the computational domain and (b) unstructured triangular mesh with 2,730 CVs.}\label{fig:fig9}
+\end{figure}
+\begin{figure}[!ht]
+	\vspace{20pt}
+	\centering
+	\begin{subfigure}[b]{0.35\textwidth}
+		\centering
+		
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE27.jpeg}
+		\caption{}
+		\label{fig:fig10c}
+	\end{subfigure}
+	\quad\qquad\qquad
+	\begin{subfigure}[b]{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE28.jpeg}
+		\caption{}
+		\label{fig:fig10a}
+	\end{subfigure}
+	\caption{{\color{orange}Surface contours of the scalar field for the heterogeneous domain with a square hole and a strong anisotropic media: (a) reference solution was obtained with SSEPS scheme and (b) was obtained with MPFA-QL scheme, using a mesh of 12,008 CVs.}}
+		\label{fig:fig101}	
+\end{figure}
+\begin{figure}[!ht]
+	\vspace{-5pt}
+	\centering
+	\begin{subfigure}[b]{0.35\textwidth}
+		\centering
+		
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE29.jpeg}
+		
+		\caption{}
+		\label{fig:fig10b}
+	\end{subfigure}
+	\quad\qquad\qquad
+	\begin{subfigure}[b]{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth,angle=0]{FIGURE30.jpeg}
+		\caption{}
+		\label{fig:fig10d}
+	\end{subfigure}
+	\caption{{\color{orange}Surface contours of the scalar field for the heterogeneous domain with a square hole and a strong anisotropic media: solution profile (a) MPFA-O and (b) MPFA-FPS, using a mesh of 12,008 CVs}.}
+	\label{fig:fig102}	
+\end{figure}
+In this test, we have used {\color{orange}three levels of unstructured triangular meshes refinements with 734, 2,730 (as depicted in Fig. \ref{fig:fig9b}) and 12,008 CVs}. In Figs.  \ref{fig:fig10a}, \ref{fig:fig10b} and \ref{fig:fig10d}, we show the numerical solution profiles obtained with the MPFA-QL, MPFA-O and the MPFA-FPS schemes, respectively. {\color{orange}According to the reference solution obtained by the non-linear SSEPS scheme (see Fig. \ref{fig:fig10c}) and Table \ref{tab6}}, it is clear that the MPFA-QL with the LPEW interpolation also fails to satisfy the DMP for this more pathological situation. {\color{orange}In the Fig. \ref{fig:fig10a}, we can see thatthe MPFA-QL scheme produces a solution that is very similar to the solution provided by the non-linear SSEPS, even though, our method fails to honor the DMP.}   
+
+{\color{orange}As it can be seen in Table 7, all linear methods fail to satisfy the DMP, but in general, the MPFA-QL scheme has produced the smallest violations of the DMP among the linear methods, except for the mesh with 734 CVs where the SLPS has produced the smallest negative value.}
+
+\begin{table}[!ht]
+	%\vspace{-5pt}
+	\centering
+	\caption{Heterogeneous domain with a square hole and an extremely anisotropic medium: maximum and minimum values of the scalar field.}
+	\begin{tabular}{c c c c  | c c | c c  }
+		\hline
+		\multicolumn{2}{c}{Scheme}
+		&  \multicolumn{2}{c}{734 CVs}
+		&  \multicolumn{2}{|c }{2,730 CVs} 
+		&  \multicolumn{2}{|c }{12,008 CVs}\\
+		\cline{3-8}
+		&   & $u_{max}$& $u_{min}$  & $u_{max}$ &  $u_{min}$& $u_{max}$ &  $u_{min}$ \\
+		\hline  
+		& MPFA-QL &{\color{blue!100}2.01}     &${\color{blue!100}-0.25}$      &{\color{blue!100}2.18}      &${\color{blue!100}-0.09}$ & {\color{blue!100}2.11}&${\color{blue!100}-0.07}$\\
+		& MPFA-O  &{\color{blue!100}2.45}     &${\color{blue!100}-1.64}$      &{\color{blue!100}3.84}      &${\color{blue!100}-1.93}$ & {\color{blue!100}2.61}&${\color{blue!100}-2.05}$\\
+		& MPFA-FPS&{\color{blue!100}2.47}     &${\color{blue!100}-3.29}$      &{\color{blue!100}2.33}      &${\color{blue!100}-1.83}$ &{\color{blue!100}2.25} &${\color{blue!100}-1.03}$ \\
+	    & MPFA-D  &{\color{blue!100}2.28}     &${\color{blue!100}-1.05}$      &{\color{blue!100}2.41}      &${\color{blue!100}-0.49}$ &{\color{blue!100}2.29} &${\color{blue!100}-1.08}$ \\
+	    & SLPS  &1.95     &${\color{blue!100}-0.04}$      &{\color{blue!100}2.03}      &${\color{blue!100}-0.27}$ &{\color{blue!100}2.12} &${\color{blue!100}-0.04}$ \\
+		& SSEPS   &1.98     & 5.76e-08     &1.99 &3.53e-10&1.99 &2.48e-11 \\	
+		\hline
+	\end{tabular}
+	\label{tab6}
+\end{table}
+\newpage
+\section{Conclusions}
+In this article, we have presented a non-orthodox linear MPFA-QL cell centered finite volume method to solve the diffusion problem in heterogeneous and anisotropic media that can be used general unstructured polygonal meshes. The main feature of the proposed linear method is a proper {\color{orange}decomposition}{} of the co-normal ``$\utilde{K}^{\text{T}}\vec{n}$'' used for the computation of the one-sided flux. This decomposition of the co-normal improves robustness of the method for problems with strong anisotropic diffusion tensors and distorted meshes while maintaining the scheme with second order accuracy for the scalar variable and more than first order accuracy for flux. Note that, the stencil of the approximation can be strictly non-local whenever the diffusion tensor is extremely anisotropic or the mesh very distorted. The MPFA-QL method is able to deal with any polygonal mesh although we have only used triangular and quadrilateral meshes. By some simple, but illustrative numerical tests, we have shown that the new proposed scheme seems to be very competitive with other MPFA methods, for 2-D diffusion problems, particularly for highly heterogeneous and anisotropic media.
+
+\section*{Acknowledgement}
+
+The authors would like thank the following Brazilian research agencies: Pernambuco State Foundation for Science and Technology (FACEPE), Brazilian National Counsel of Technological and Scientific Development (CNPq) and CENPES-PETROBRAS (SIGER - the Petrobras Network on Simulation and Management of Petroleum Reservoirs).
+
+\section*{References}
+
+\bibliography{coluna-espectral-rel6}
+\end{document}
