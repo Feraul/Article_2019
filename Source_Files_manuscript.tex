@@ -71,7 +71,7 @@ T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \begin{frontmatter}
 
-\title{Acceleration Strategies for Non-Linear Finite Volume Positive-Preserving for Diffusion Problems in Anisotropic and Heterogeneous Media}
+\title{Acceleration Strategies for Non-Linear Finite Volume Positivity-Preserving for Diffusion Problems in Anisotropic and Heterogeneous Media}
 %\tnotetext[mytitlenote]{Fully documented templates are available in the elsarticle package on \href{http://www.ctan.org/tex-archive/macros/latex/contrib/elsarticle}{CTAN}.}
 
 %% or include affiliations in footnotes:
@@ -88,7 +88,7 @@ T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 %\linenumbers
 \begin{abstract}
-In this paper, we present a não linear cell-centered finite volume positive-preseving (NLFV-PP) scheme for discretizing diffusion problems on general polygonal meshes. This scheme uses a quasi-local stencil to approximate the  control face flux when solving the steady state diffusion problem, being able to reproduce piecewise linear solutions exactly and it is very robust when dealing with heterogeneous and highly anisotropic media and severely distorted meshes. In our linear scheme, we first construct the one-sided fluxes on each control surface independently and then a unique flux expression is obtained by a convex combination of the one-sided fluxes. The unknown values at the vertices that define a control surface are interpolated by means of a linearity-preserving interpolation procedure, considering control volumes surrounding these vertices. To show the potential of the MPFA-QL scheme, we solve some benchmark using triangular and quadrilateral meshes.
+In this paper, we present a não linear cell-centered finite volume positivity-preseving (NLFV-PP) scheme for discretizing diffusion problems on general polygonal meshes. This scheme uses a quasi-local stencil to approximate the  control face flux when solving the steady state diffusion problem, being able to reproduce piecewise linear solutions exactly and it is very robust when dealing with heterogeneous and highly anisotropic media and severely distorted meshes. In our linear scheme, we first construct the one-sided fluxes on each control surface independently and then a unique flux expression is obtained by a convex combination of the one-sided fluxes. The unknown values at the vertices that define a control surface are interpolated by means of a linearity-preserving interpolation procedure, considering control volumes surrounding these vertices. To show the potential of the MPFA-QL scheme, we solve some benchmark using triangular and quadrilateral meshes.
 \end{abstract}
 
 \begin{keyword}
@@ -146,7 +146,7 @@ where $\partial \Omega=\Gamma_{D}\cup \Gamma_{N}$, $\Gamma_{D}$ and $\Gamma_{N}$
 
 \section{Numerical formulation}
 
-In this section, we present the numerical formulation of our non-orthodox Multipoint Flux Approximation Method (MPFA-QL), using the interpolation strategy proposed by Gao and Wu \cite{gao2011linearity}. 
+In this section, we present the numerical formulation of our Non-Linear Finite Volume Positivy-Preserving (NLFV-PP) scheme, using the interpolation strategy proposed by Gao and Wu \cite{gao2011linearity}. 
 
 \subsection{Formulation of the NLFV-PP scheme} 
 A finite volume discretization of $\Omega$ is defined by a triplet ($\mathpzc{M}$, $\mathpzc{E}$, $\mathpzc{O}$), where:
@@ -206,34 +206,12 @@ where,
 {{\alpha }_{\hat{L},i(IJ)}}> 0, \quad {{\alpha }_{\hat{L},j(IJ)}}> 0 \quad \text{and} \quad {{\alpha }_{\hat{L},i(IJ)}}+ {{\alpha }_{\hat{L},j(IJ)}}> 0
 \end{equation}
 
-Equation \ref{eq10} (with Eq. \ref{eq11}) is also called, convex descomposition of the co-normal. This decomposition is necessary in constructing non-linear positive-preserving schemes (\cite{le2005finite}, \cite{lipnikov2007monotone}, \cite{yuan2008monotone},\cite{gao2013small}). The physical-geometric parameters in Eq. \ref{eq11} are calculated following a geometric procedure. In fact, we can write:
-\begin{equation}\label{eq12}
-| {{\alpha }_{\hat{L},j(IJ)}}|=\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|} 
-\end{equation}
-and
-\begin{equation}\label{eq12aux}
- \sin \left( \theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2} \right)=\frac{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right|}
-\end{equation}
-where the angles $\theta_{\hat{L},IJ}^{1}$ and $\theta_{\hat{L},IJ}^{2}$  are represented in Fig. \ref{fig1} and the symbol ``$\times$'' denotes the vector product. From Eqs. \ref{eq12} and \ref{eq12aux}, we have:
-\begin{eqnarray}\label{eq13}
-\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|&=&\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{| {{\alpha }_{\hat{L},j(IJ)}}|} \nonumber\\
-&=&\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right|\sin \left( \theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2} \right)
-\end{eqnarray}
-
-We can also write:
-\begin{equation}\label{eq14}
-\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}}\times {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}} \right|\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|}=\sin \left( \theta _{\hat{L},IJ}^{1} \right)
-\end{equation}
-
-After some algebraic manipulation of Eqs. \ref{eq13} and \ref{eq14}, we get: 
+Equation \ref{eq10} (with Eq. \ref{eq11}) is also called, convex descomposition of the co-normal. This decomposition is necessary in constructing non-linear positive-preserving schemes (\cite{le2005finite}, \cite{lipnikov2007monotone}, \cite{yuan2008monotone},\cite{gao2013small}). The physical-geometric parameters in Eq. \ref{eq11} are calculated in {\color{red}[Citar meu artigo]} and given by:
+ 
 \begin{equation}\label{eq15}
-{\alpha }_{\hat{L},j(IJ)}=\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}} \right|\sin \left( \theta _{\hat{L},IJ}^{1} \right)}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right|\sin \left( \theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2} \right)}
+{\alpha }_{\hat{L},j(IJ)}=\frac{\left| {{{\utilde{K}}}_{\hat{L}}^\top}{{{\vec{n}}}_{IJ}} \right|\sin \left( \theta _{\hat{L},IJ}^{1} \right)}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},j(IJ)}} \right|\sin \left( \theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2} \right)}\quad\text{and}\quad {{\alpha }_{\hat{L},i(IJ)}}=\frac{\left| \utilde{K}_{{\hat{L}}}^\top{{{\vec{n}}}_{IJ}} \right|\sin (\theta _{\hat{L},IJ}^{2})}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|\sin (\theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2})}
 \end{equation}
-where $| {{\alpha }_{\hat{L},j(IJ)}}|={{\alpha }_{\hat{L},j(IJ)}}> 0$ from the angles that satisfy the following conditions $0<\theta _{\hat{L},IJ}^{1}, \theta _{\hat{L},IJ}^{2} < \pi $ and $\theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2}< \pi $. Using a similar argument, we calculate the parameter ${{\alpha }_{\hat{L},i(IJ)}}$:
-\begin{equation}\label{eq16}
-{{\alpha }_{\hat{L},i(IJ)}}=\frac{\left| \utilde{K}_{{\hat{L}}}^\top{{{\vec{n}}}_{IJ}} \right|\sin (\theta _{\hat{L},IJ}^{2})}{\left| {{\overrightarrow{{{x}_{{\hat{L}}}}x}}_{\hat{L},i(IJ)}} \right|\sin (\theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2})}
-\end{equation}
-where $| {{\alpha }_{\hat{L},i(IJ)}} |={{\alpha }_{\hat{L},i(IJ)}}> 0$.
+where $| {{\alpha }_{\hat{L},j(IJ)}}|={{\alpha }_{\hat{L},j(IJ)}}> 0$ and $| {{\alpha }_{\hat{L},i(IJ)}} |={{\alpha }_{\hat{L},i(IJ)}}> 0$ from the angles that satisfy the following conditions $0<\theta _{\hat{L},IJ}^{1}, \theta _{\hat{L},IJ}^{2} < \pi $ and $\theta _{\hat{L},IJ}^{1}+\theta _{\hat{L},IJ}^{2}< \pi $. 
 
 Summing up, in the previous equations, the coefficients ${{\alpha }_{\hat{L},i(IJ)}}$, ${{\alpha }_{\hat{L},j(IJ)}}$  exist and are non-negative, therefore, ${{\alpha }_{\hat{L},i(IJ)}}+{{\alpha }_{\hat{L},j(IJ)}}> 0$. It is worth mentioning, that our scheme is not monotone, because non-negative coefficients is a necessary, but not sufficient condition to assure the monotone or extremum-preserving properties of this type of scheme (\cite{le2005finite}, \cite{lipnikov2007monotone}, \cite{yuan2008monotone},\cite{gao2013small}).
 
@@ -273,34 +251,50 @@ In Equations \ref{eq19} and \ref{eq20}, the one sided fluxes depend on auxiliary
 
 \subsubsection{Construction of the unique flux over the edge}
 
-In order to construct a conservative scheme, we use the one-side fluxes defined in Eqs.  \ref{eq19} and \ref{eq20} to determine the unique flux on the edge $IJ$. Therefore, considering flux continuity on the edge $IJ$ given in Eq. \ref{eq8}, we can write:
+Having the one-sided fluxes in Eq. \ref{eq19} and \ref{eq20} we can to define the unique flux on edge $IJ$ as the non-linear combination of these $\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}$ and $\vec{\mathpzc{F}}_{IJ}^{{\hat{R}}}\cdot {{\vec{N}}_{JI}}$, i.e.
  \begin{equation}\label{eq20aux1}
-{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}=\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}=-\vec{\mathpzc{F}}_{IJ}^{{\hat{R}}}\cdot {{\vec{N}}_{JI}}
+{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}=\mu_{\hat{L},IJ}\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot{{\vec{N}}_{IJ}} -\mu_{\hat{R},IJ}\vec{\mathpzc{F}}_{IJ}^{{\hat{R}}}\cdot {{\vec{N}}_{JI}}
 \end{equation}
   
-On the other hand, from Eq. \ref{eq19} and replacing Eq. \ref{eq20} into \ref{eq20aux1} we get:
+where $\mu_{\hat{L},IJ}$ and $\mu_{\hat{R},IJ}$ are two positive parameters, satisfying:
 \begin{equation}\label{eq19aux1}
- \frac{1}{{{\psi }_{\hat{L},IJ}}}\vec{\mathpzc{F}}_{IJ}\cdot {{\vec{N}}_{IJ}}=\left| \overrightarrow{IJ} \right|\left( {{u}_{{\hat{L}}}}-\frac{1}{{{\psi }_{\hat{L},IJ}}}\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}} \right)
-\end{equation}
-and 
-\begin{equation}\label{eq20aux2}
- \frac{1}{{{\psi }_{\hat{R},IJ}}}\vec{\mathpzc{F}}_{IJ}\cdot {{\vec{N}}_{JI}}=-\left| \overrightarrow{IJ} \right|\left( {{u}_{{\hat{R}}}}-\frac{1}{{{\psi }_{\hat{R},IJ}}}\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}} \right)
+\mu_{\hat{L},IJ}+\mu_{\hat{R},IJ}=1
 \end{equation}
 
-Adding Eqs. \ref{eq19aux1} and \ref{eq20aux2} and after some algebraic manipulations, we obtain the unique flux on edge $IJ$, as:
-\begin{equation}\label{eq21}
-{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}={{w}_{\hat{R},IJ}}\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}-{{w}_{\hat{L},IJ}}\vec{\mathpzc{F}}_{IJ}^{{\hat{R}}}\cdot {{\vec{N}}_{JI}}
-\end{equation}
-where the two positive weights, $w_{\hat{L},IJ}$ and $w_{\hat{R},IJ}$ are given as follows:
+Substituting the Eqs. \ref{eq19} and \ref{eq20} in \ref{eq20aux1}, we have:
+\begin{eqnarray}\label{eq21}
+{{\vec{\mathpzc{F}}}_{IJ}}\cdot {{\vec{N}}_{IJ}}&=&\mu_{\hat{L},IJ}\left| \overrightarrow{IJ} \right| {\psi _{\hat{L},IJ}}{u_{\hat{L}}}-\mu_{\hat{R},IJ}\left| \overrightarrow{IJ} \right|{\psi _{\hat{R},IJ}}{u_{\hat{R}}}\nonumber\\
+&+&\mu_{\hat{R},IJ}\left| \overrightarrow{IJ} \right|\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}}- \mu_{\hat{L},IJ}\left| \overrightarrow{IJ} \right|\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}}
+\end{eqnarray}
+In order to obtained our non-linear finite volume method with a two-point flux approximation, the third and four terms of Eq. (18) should vanish, therefore we can we have:
 \begin{equation}\label{eq22}
-{{w}_{\hat{R},IJ}}=\frac{{{\psi }_{\hat{R},IJ}}}{{{\psi }_{\hat{L},IJ}}+{{\psi }_{\hat{R},IJ}}}\quad \text{and}\quad {{w}_{\hat{L},IJ}}=\frac{{{\psi }_{\hat{L},IJ}}}{{{\psi }_{\hat{L},IJ}}+{{\psi }_{\hat{R},IJ}}}
+\begin{cases}
+\mu_{\hat{R},IJ}\left| \overrightarrow{IJ} \right|\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}}- \mu_{\hat{L},IJ}\left| \overrightarrow{IJ} \right|\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}}=0\\
+\mu_{\hat{R},IJ}+\mu_{\hat{L},IJ}=1
+\end{cases}
 \end{equation}
-CONTINUE...
+Now, Eq. \ref{eq21} the parameters $\mu_{\hat{R},IJ}$ and $\mu_{\hat{L},IJ} $ can be defined as:
+\begin{equation}\label{eq22aux}
+\mu_{\hat{R},IJ}(u)=\frac{\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}}}{\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}} + \sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}}}
+\end{equation}
+and
+
+\begin{equation}\label{eq22aux1}
+\mu_{\hat{L},IJ}(u)=\frac{\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}}}{\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{R},\gamma (IJ)}}{{u}_{\hat{R},\gamma (IJ)}}} + \sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}}}
+\end{equation}
+Replacing Eq. \ref{eq22aux} in Eq. \ref{eq22aux1}, we have the unique fluxes:
+\begin{equation}\label{eq22aux2}
+\vec{\mathpzc{F}}_{IJ}\cdot \vec{N}_{IJ}=A_{\hat{L},IJ}(u)u_{\hat{L}}-A_{\hat{R},IJ}(u)u_{\hat{R}}
+\end{equation}
+where $A_{\hat{L},IJ}(u)=\left| \overrightarrow{IJ} \right|\mu_{\hat{L},IJ}(u) {\psi _{\hat{L},IJ}}$ and $A_{\hat{R},IJ}(u)=\left| \overrightarrow{IJ} \right|\mu_{\hat{R},IJ}(u){\psi _{\hat{R},IJ}}$.
+Remember that the coefficients defined in Eq. (11) and the parameters $\mu_{\hat{L},IJ}$ and $\mu_{\hat{R},IJ} $ are non-
+negative, then $A_{\hat{L},IJ}(u)$ and $A_{\hat{R},IJ}(u)$. Those conditions are keys to guarantee that the scheme is monotone.
 \subsubsection{Treatment of boundary fluxes}
 For edges $(IJ)$ over boundaries ${{\Gamma }_{D}}\subset {{\mathpzc{E}}_{{\hat{L}}}}\cap {{\mathpzc{E}}^{ext}}$  with prescribed scalar variable (Dirichlet boundary conditions) and considering Eq. \ref{eq18}, we have:
 \begin{equation}\label{eq23}
-\vec{\mathpzc{F}}_{IJ}^{{}}\cdot {{\vec{N}}_{IJ}}=\vec{\mathpzc{F}}_{IJ}^{{\hat{L}}}\cdot {{\vec{N}}_{IJ}}=\left| \overrightarrow{IJ} \right|\left( {{\psi }_{\hat{L},IJ}}{{u}_{{\hat{L}}}}-\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}{{u}_{\hat{L},\gamma (IJ)}}}\right) 
+\vec{\mathpzc{F}}_{IJ}^{{}}\cdot {{\vec{N}}_{IJ}}=A_{\hat{L},IJ}(u)u_{{\hat{L}}}-\sum\limits_{\gamma =i,j}{{{\alpha }_{\hat{L},\gamma (IJ)}}}{{u}_{\hat{L},\gamma (IJ)}}
 \end{equation}
+where $A_{\hat{L},IJ}=\left| \overrightarrow{IJ} \right| \mu_{\hat{L},IJ}(u){{\psi }_{\hat{L},IJ}}$.
 
 Now for edges $(IJ)$ over boundaries ${{\Gamma }_{N}}\subset {{\mathpzc{E}}_{{\hat{L}}}}\cap {{\mathpzc{E}}^{ext}}$  with imposed fluxes (Neumann boundary conditions) and again, considering Eq. \ref{eq18}, we can write:
 \begin{equation}\label{eq24}
@@ -309,7 +303,7 @@ Now for edges $(IJ)$ over boundaries ${{\Gamma }_{N}}\subset {{\mathpzc{E}}_{{\h
 in which the normal flux on ${{\Gamma }_{N}}$  is given by the mean value ${{\bar{g}}_{N,IJ}}$.
 
 \subsubsection{Approximation of node-unknowns}
-As previously mentioned, the scalar unknowns on mesh vertices can be written as linear weighted combinations of the neighboring cell-centered unknowns, so that the MPFA-QL scheme becomes a fully cell-centered finite volume formulation. In the present work, we used the explicit weight proposed in \cite{gao2011linearity} and used in (\cite{queiroz2014accuracy},\cite{contreras2016cell}). This weight is called ``explicit'', to indicate {\color{orange}that it is} computed with no need to solve a set of local system of equations such as in others classic MPFA methods (\cite{aavatsmark1998discretization},\cite{edwards1998finite}). Other authors have proposed various ways to calculate the interpolation weights (\cite{huang1998study}, \cite{basko2009efficient},\cite{wu2005linearly}), but, as pointed out by Gao an Wu \cite{gao2011linearity}, in general, these interpolations are not very robust in treating anisotropic and heterogeneous (possibly discontinuous) media. However, adopting the Linearity-Preserving Explicit Weighted (LPEW) interpolation, the explicit weight in Eq. \ref{eq25} is derived using the continuity equation throughout the auxiliary volumes or ``interaction regions'' built around each mesh vertex, by connecting the midpoints of adjacent mesh edges, as shown in Fig. \ref{fig4general}.
+As previously mentioned, the scalar unknowns on mesh vertices can be written as linear weighted combinations of the neighboring cell-centered unknowns, so that the MPFA-QL scheme becomes a fully cell-centered finite volume formulation. In the present work, we used the explicit weight proposed in \cite{gao2011linearity} and used in (\cite{queiroz2014accuracy},\cite{contreras2016cell}). This weight is called ``explicit'', to indicate that it is computed with no need to solve a set of local system of equations such as in others classic MPFA methods (\cite{aavatsmark1998discretization},\cite{edwards1998finite}). Other authors have proposed various ways to calculate the interpolation weights (\cite{huang1998study}, \cite{basko2009efficient},\cite{wu2005linearly}), but, as pointed out by Gao an Wu \cite{gao2011linearity}, in general, these interpolations are not very robust in treating anisotropic and heterogeneous (possibly discontinuous) media. However, adopting the Linearity-Preserving Explicit Weighted (LPEW) interpolation, the explicit weight in Eq. \ref{eq25} is derived using the continuity equation throughout the auxiliary volumes or ``interaction regions'' built around each mesh vertex, by connecting the midpoints of adjacent mesh edges, as shown in Fig. \ref{fig4general}.
 
 In this case, a general vertex ($I$) unknown can be expressed as:
 \begin{equation}\label{eq25}
@@ -328,60 +322,60 @@ where  $w_{\hat{i}}$ is the weight assigned to each control volume $\hat{i}$, $n
 	\end{center}
 \end{figure}  
 
-{\color{orange}In Equation \ref{eq26}, the coefficients $\bar{\varpi }_{{\hat{i}}}$  are determined in two stages. In effect, the first stage is to build the fluxes on the half-edge $I\bar{M}_{\hat{i}}$ using the triangle $\triangle I\bar{M}_{\hat{i}}x_{\hat{i}}$ (see Fig. \ref{fig4general}), therefore:}
+In Equation \ref{eq26}, the coefficients $\bar{\varpi }_{{\hat{i}}}$  are determined in two stages. In effect, the first stage is to build the fluxes on the half-edge $I\bar{M}_{\hat{i}}$ using the triangle $\triangle I\bar{M}_{\hat{i}}x_{\hat{i}}$ (see Fig. \ref{fig4general}), therefore:
 \begin{equation}\label{eqA00}
 \vec{\mathpzc{F}}_{I\bar{M}_{\hat{i}}}^{{\hat{i}}}\cdot \vec{N}_{I\bar{M}_{\hat{i}}}=K_{\hat{i},1}^{(n)}\eta_{\hat{i},1}(u_{\hat{i}}-u_{I})-(K_{\hat{i},1}^{(t)}+\cot (\theta_{\hat{i}}^{1})K_{\hat{i},1}^{(n)})(\bar{u}_{\hat{i}}-u_{I})
 \end{equation}
-{\color{orange}and the flux on the edge $\bar{M}_{\hat{i}}I$, using the triangle $\triangle x_{\hat{i}-1}\bar{M}_{\hat{i}}I$, is given by:} 
+and the flux on the edge $\bar{M}_{\hat{i}}I$, using the triangle $\triangle x_{\hat{i}-1}\bar{M}_{\hat{i}}I$, is given by:
 \begin{equation}\label{eqA000}
 \vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}I}^{{\hat{i}-1}}\cdot \vec{N}_{\bar{M}_{\hat{i}}I}=K_{\hat{i}-1,2}^{(n)}\eta_{\hat{i}-1,2}(u_{\hat{i}-1}-u_{I})+(K_{\hat{i}-1,2}^{(t)}-\cot (\theta_{\hat{i}-1}^{2})K_{\hat{i}-1,2}^{(n)})(\bar{u}_{\hat{i}}-u_{I})
 \end{equation}
 	
-{\color{orange}By imposing flux continuity on the half-edge $I\bar{M}_{\hat{i}} $, we obtain the following expression:}
+By imposing flux continuity on the half-edge $I\bar{M}_{\hat{i}} $, we obtain the following expression:
 \begin{equation}\label{eqA0}
 \bar{u}_{\hat{i}}-u_{I}=\frac{K_{\hat{i},1}^{(n)}\eta_{\hat{i},1}(u_{\hat{i}}-u_{I})+K_{\hat{i}-1,2}^{(n)}\eta_{\hat{i},2}(u_{\hat{i}-1}-u_{I})}{K_{\hat{i}-1,2}^{(n)}\cot(\theta_{\hat{i}-1}^{2})+ K_{\hat{i},1}^{(n)}\cot(\theta_{\hat{i}}^{1})-K_{\hat{i}-1,2}^{(t)}+K_{\hat{i},1}^{(t)}}
 \end{equation}
-{\color{orange}where  ${\eta }_{\hat{i},1}$ and ${\eta }_{\hat{i},2}$ are given by:}
+where  ${\eta }_{\hat{i},1}$ and ${\eta }_{\hat{i},2}$ are given by:
 \begin{equation}\label{eqA2}
 {{\eta }_{\hat{i},1}}={\left| \overrightarrow{I{{{\bar{M}}}_{i}}} \right|}/{h_{IJ}}\;\text{,  }{{\eta }_{\hat{i},2}}={\left| \overrightarrow{I{{{\bar{M}}}_{i+1}}} \right|}/h_{IJ+1}
 \end{equation}
 
-{\color{orange}At this first stage, we have obtained $ncv$ equations for each $\bar{u}_{\hat{i}}$. Therefore, the second stage consist in eliminating all the intermediate unknowns (in this case $\bar{u}_{\hat{i}}$), then we consider a mass balance in the auxiliary region (yellow region in Fig. \ref{fig4general})}:
+At this first stage, we have obtained $ncv$ equations for each $\bar{u}_{\hat{i}}$. Therefore, the second stage consist in eliminating all the intermediate unknowns (in this case $\bar{u}_{\hat{i}}$), then we consider a mass balance in the auxiliary region (yellow region in Fig. \ref{fig4general}):
 \begin{equation}\label{eqA001}
 \sum_{i=1}^{ncv}\vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}^{{\hat{i}}}\cdot \vec{N}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}=0
 \end{equation}	
-{\color{orange}where the flux $\vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}^{{\hat{i}}}\cdot \vec{N}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}$ on the edge $\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}$ is derived considering the triangle $\triangle I\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}$, so we have:}
+where the flux $\vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}^{{\hat{i}}}\cdot \vec{N}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}$ on the edge $\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}$ is derived considering the triangle $\triangle I\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}$, so we have:
 \begin{equation}\label{eqA0001}
 \vec{\mathpzc{F}}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}^{{\hat{i}}}\cdot \vec{N}_{\bar{M}_{\hat{i}}\bar{M}_{\hat{i}+1}}=(\bar{K}_{\hat{i}}^{(t)}-\bar{K}_{\hat{i}}^{(n)}\cot (\vartheta_{\hat{i}}^{2}))(\bar{u}_{\hat{i}}-u_{I})-(\bar{K}_{\hat{i}}^{(t)}+\bar{K}_{\hat{i}}^{(n)}\cot (\vartheta_{\hat{i}}^{1}))(\bar{u}_{\hat{i}+1}-u_{I}) 
 \end{equation}	
-{\color{orange}where  ${{\vec{N}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}}$ represents the area vector to the edge ${\bar{M}_{\hat{i}}}{\bar{M}_{\hat{i}+1}}$.}
+where  ${{\vec{N}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}}$ represents the area vector to the edge ${\bar{M}_{\hat{i}}}{\bar{M}_{\hat{i}+1}}$.
 
-{\color{orange}By substituting Eq. \ref{eqA0001} in Eq. \ref{eqA001}, we obtain the following expression:}
+By substituting Eq. \ref{eqA0001} in Eq. \ref{eqA001}, we obtain the following expression:
 \begin{equation}\label{eqA01}
 \sum_{i=1}^{ncv}\left[ \overline{K}_{\hat{i}-1}^{(t)} -\overline{K}_{\hat{i}-1}^{(n)}\cot (\vartheta_{\hat{i}-1}^{1})+\overline{K}_{\hat{i}}^{(n)}\cot (\vartheta_{\hat{i}}^{2})\right](\bar{u}_{\hat{i}}-u_{I})=0 
 \end{equation}
-{\color{orange}where for each $\hat{i}=1,2,...,ncv$, we have:}
+where for each $\hat{i}=1,2,...,ncv$, we have:
 \begin{equation}\label{eqA7}
 \overline{K}_{{\hat{i}}}^{\left( n \right)}={\left[ {{\left( {{{\vec{N}}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}} \right)}^\top}{\utilde{K}_{\hat{i}}}\left( {{{\vec{N}}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}} \right) \right]}/{{{\left| \overrightarrow{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}} \right|}^{2}}}
 \end{equation}
 \begin{equation}\label{eqA6}
 \overline{K}_{{\hat{i}}}^{\left( t \right)}={\left[ {{\left( {{{\vec{N}}}_{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}}} \right)}^\top}{\utilde{K}_{{\hat{i}}}}\left( \overrightarrow{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}} \right) \right]}/{{{\left| \overrightarrow{{{{\bar{M}}}_{\hat{i}}}{{{\bar{M}}}_{\hat{i}+1}}} \right|}^{2}}}
 \end{equation}
-{\color{orange}By substituting Eq. \ref{eqA0} into \ref{eqA01}, we get:}
+By substituting Eq. \ref{eqA0} into \ref{eqA01}, we get:
 \begin{equation}\label{eqA02}
 \sum_{i=1}^{ncv}\bar{\varpi }_{\hat{i}}(u_{\hat{i}}-u_{I})=0\quad \text{with}\quad \bar{\varpi }_{{\hat{i}}}=K_{\hat{i},1}^{(n)}{{\eta }_{\hat{i},1}}\xi \left( {\hat{i}} \right)+\xi \left( \hat{i}+1 \right)K_{\hat{i},2}^{(n)}{{\eta }_{\hat{i},2}} 
 \end{equation}
-{\color{orange}and}
+and
 \begin{equation}\label{eqA4}
 \xi\left( {\hat{i}} \right)=\frac{\overline{K}_{\hat{i}}^{(n)}\cot({\vartheta _{\hat{i}}^{2}})-\overline{K}_{\hat{i}}^{(t)}+\overline{K}_{\hat{i}-1}^{(n)}\cot({{\vartheta }_{\hat{i}-1}^{1}})+\overline{K}_{\hat{i}-1}^{(t)}}{K_{\hat{i}-1,2}^{(n)}\cot({{\theta }_{\hat{i}-1}^{2}})+K_{\hat{i},1}^{(n)}\cot({{\theta }_{\hat{i}}^{1}})-K_{\hat{i}-1,2}^{(t)}+K_{\hat{i},1}^{(t)}}
 \end{equation}
-{\color{orange}where}
+where
 \begin{equation}\label{eqA3}
 K_{\hat{i},k}^{(t)}={\left[ {{\left( {\vec{N}_I\bar{M}_{\zeta }} \right)}^\top}{{{\utilde{K}}}_{{\hat{i}}}}\left( \overrightarrow{I{{{\bar{M}}}_{\zeta }}} \right) \right]}/{{{\left| \overrightarrow{I{{{\bar{M}}}_{\zeta }}} \right|}^{2}}}\;,\text{ }K_{\hat{i},k}^{(n)}={\left[ {{\left( {{{\vec{N}}}_{I{{{\bar{M}}}_{\zeta }}}} \right)}^\top}{{{\utilde{K}}}_{{\hat{i}}}}\left( {{{\vec{N}}}_{I{{{\bar{M}}}_{\zeta }}}} \right) \right]}/{{{\left| \overrightarrow{I{{{\bar{M}}}_{\zeta }}} \right|}^{2}}}
 \end{equation}
-{\color{orange}here $\zeta=\hat{i}+k-1$ and $k=1,2$.}
+here $\zeta=\hat{i}+k-1$ and $k=1,2$.
 
-{\color{orange}The physical-geometric parameters $\overline{K}_{{\hat{i}}}^{\left( n \right)}$, $\overline{K}_{{\hat{i}}}^{\left( t \right)}$, $K_{\hat{i},k}^{(n)},\,\,K_{\hat{i},k}^{(t)}$ and $\xi\left( {\hat{i}} \right)$ are computed during the preprocessing stage. Further details of the LPEW interpolation can be found in (\cite{gao2011linearity}, \cite{queiroz2014accuracy}, \cite{contreras2016cell}).}
+The physical-geometric parameters $\overline{K}_{{\hat{i}}}^{\left( n \right)}$, $\overline{K}_{{\hat{i}}}^{\left( t \right)}$, $K_{\hat{i},k}^{(n)},\,\,K_{\hat{i},k}^{(t)}$ and $\xi\left( {\hat{i}} \right)$ are computed during the preprocessing stage. Further details of the LPEW interpolation can be found in (\cite{gao2011linearity}, \cite{queiroz2014accuracy}, \cite{contreras2016cell}).
 
 \section{Numerical experiments}\label{results}
 
