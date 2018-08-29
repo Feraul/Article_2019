@@ -415,9 +415,30 @@ Non-homogeneous Dirichlet boundary conditions are given by: \linebreak ${{g}_{D}
 0 & \beta   \\
 \end{matrix} \right)\mathcal{R}_{\theta }^{-1} \quad\text{and}\quad \theta =\arctan \left( 0.2 \right)
 \end{equation}
-where ${{\mathcal{R}}_{\theta }}$ is rotation matrix, $\alpha=100$, $\beta=10$ on $\Omega_{2}$ and $\alpha=1$, $\beta=0.1$ on $\Omega_{1}\cup\Omega_{3}$ .
+where ${{\mathcal{R}}_{\theta }}$ is rotation matrix, $\alpha=100$, $\beta=10$ on $\Omega_{2}$ and $\alpha=1$, $\beta=0.1$ on $\Omega_{1}\cup\Omega_{3}$.
 
-According to Herbin and Hubert \cite{herbin2008benchmark}, this problem represents a situation encountered in underground flow engineering where an oblique drain consisting in a very permeable layer concentrates most part of the flow{\color{orange}. This} drain is meshed with only one layer of cells, see Fig. \ref{fig:fig4b}. We discretize the domain using an oblique mesh (see Fig. \ref{fig:fig4a}), and we have obtained the following errors ${{\varepsilon }_{u}}=$8.52e-16 and ${{\varepsilon }_{\mathpzc{F}}}=$1.02e-13  showing that the MPFA-QL scheme is linearity-preserving.
+\begin{table}[!ht]
+	\label{tab11}
+	%\vspace{-20pt}
+	\centering
+	\caption{Linearity test}
+	\begin{subtable}{1\textwidth}
+		
+		\begin{tabular}{c c c c c| c c c c }
+			\hline
+			&  \multicolumn{4}{c}{ Picard Iteration}
+			&  \multicolumn{4}{|c}{  Anderson Accelerator}\\
+			\cline{1-9}
+			&  $\varepsilon_{u}$ &  $\varepsilon_{\mathpzc{F}}$ & Iter. Number&CPU& $\varepsilon_{u}$ & $\varepsilon_{\mathpzc{F}}$& Iter. Number &CPU\\
+			\hline  
+			&9.89e-12 &5.65e-11& 13 &0.75 &5.73e-12  &3.92e-11 & 2&0.64 \\	
+			\hline
+		\end{tabular}
+	\end{subtable}
+	
+\end{table}
+
+According to Herbin and Hubert \cite{herbin2008benchmark}, this problem represents a situation encountered in underground flow engineering where an oblique drain consisting in a very permeable layer concentrates most part of the flow. This drain is meshed with only one layer of cells, see Fig. \ref{fig:fig4b}. We discretize the domain using an oblique mesh (see Fig. \ref{fig:fig4a}), and we have obtained the errors showed in Table \ref{tab11},  showing that the NLFV-PP scheme is linearity-preserving.
 
 \begin{figure}
 	\centering
@@ -438,7 +459,7 @@ According to Herbin and Hubert \cite{herbin2008benchmark}, this problem represen
 		\caption{}
 		\label{fig:fig4c}
 	\end{subfigure}
-	\caption{(a) Oblique mesh, (b) discontinuous diffusion tensor (blue region {\color{orange}stands for} $\Omega_{1}\cap\Omega_{3}$  and red region {\color{orange}stands for} $\Omega_{2}$) and (c) the exact solution.}
+	\caption{(a) Oblique mesh, (b) discontinuous diffusion tensor (blue region stands for $\Omega_{1}\cap\Omega_{3}$  and red region stands for $\Omega_{2}$) and (c) the exact solution.}
 	\label{fig:fig4}
 \end{figure}
 
@@ -933,26 +954,24 @@ where $\theta ={\pi }/{2}$, ${{x}_{1}}=x+{{10}^{-3}}$ and ${{y}_{1}}=y+{{10}^{-3
 In this test, we have used {\color{orange}three levels of unstructured triangular meshes refinements with 734, 2,730 (as depicted in Fig. \ref{fig:fig9b}) and 12,008 CVs}. In Figs.  \ref{fig:fig10a}, \ref{fig:fig10b} and \ref{fig:fig10d}, we show the numerical solution profiles obtained with the MPFA-QL, MPFA-O and the MPFA-FPS schemes, respectively. {\color{orange}According to the reference solution obtained by the non-linear SSEPS scheme (see Fig. \ref{fig:fig10c}) and Table \ref{tab6}}, it is clear that the MPFA-QL with the LPEW interpolation also fails to satisfy the DMP for this more pathological situation. {\color{orange}In the Fig. \ref{fig:fig10a}, we can see thatthe MPFA-QL scheme produces a solution that is very similar to the solution provided by the non-linear SSEPS, even though, our method fails to honor the DMP.}   
 
 {\color{orange}As it can be seen in Table 7, all linear methods fail to satisfy the DMP, but in general, the MPFA-QL scheme has produced the smallest violations of the DMP among the linear methods, except for the mesh with 734 CVs where the SLPS has produced the smallest negative value.}
-
+TOLERANCIA $10^{-8}$
 \begin{table}[!ht]
 	%\vspace{-5pt}
 	\centering
 	\caption{Heterogeneous domain with a square hole and an extremely anisotropic medium: maximum and minimum values of the scalar field.}
 	\begin{tabular}{c c c c  | c c | c c  }
 		\hline
-		\multicolumn{2}{c}{Scheme}
+		\multicolumn{2}{c}{}
 		&  \multicolumn{2}{c}{734 CVs}
 		&  \multicolumn{2}{|c }{2,730 CVs} 
 		&  \multicolumn{2}{|c }{12,008 CVs}\\
 		\cline{3-8}
-		&   & $u_{max}$& $u_{min}$  & $u_{max}$ &  $u_{min}$& $u_{max}$ &  $u_{min}$ \\
+		&   & PI& AA  & PI &  AA& PI&  AA \\
 		\hline  
-		& MPFA-QL &{\color{blue!100}2.01}     &${\color{blue!100}-0.25}$      &{\color{blue!100}2.18}      &${\color{blue!100}-0.09}$ & {\color{blue!100}2.11}&${\color{blue!100}-0.07}$\\
-		& MPFA-O  &{\color{blue!100}2.45}     &${\color{blue!100}-1.64}$      &{\color{blue!100}3.84}      &${\color{blue!100}-1.93}$ & {\color{blue!100}2.61}&${\color{blue!100}-2.05}$\\
-		& MPFA-FPS&{\color{blue!100}2.47}     &${\color{blue!100}-3.29}$      &{\color{blue!100}2.33}      &${\color{blue!100}-1.83}$ &{\color{blue!100}2.25} &${\color{blue!100}-1.03}$ \\
-	    & MPFA-D  &{\color{blue!100}2.28}     &${\color{blue!100}-1.05}$      &{\color{blue!100}2.41}      &${\color{blue!100}-0.49}$ &{\color{blue!100}2.29} &${\color{blue!100}-1.08}$ \\
-	    & SLPS  &1.95     &${\color{blue!100}-0.04}$      &{\color{blue!100}2.03}      &${\color{blue!100}-0.27}$ &{\color{blue!100}2.12} &${\color{blue!100}-0.04}$ \\
-		& SSEPS   &1.98     & 5.76e-08     &1.99 &3.53e-10&1.99 &2.48e-11 \\	
+		& $u_{max}$ &2.19 & 2.18      &2.44   &2.44 & 2.17&2.17\\
+		& $u_{min}$ &1.87e-13 &1.85e-13     &2.11e-21      &2.11e-21 &6.89e-30&6.89e-30\\
+		& Iter. Number&1000   &2      &1000      &6 &1000 &5 \\
+	    & CPU  &61.99     &3.52      &268.03      &14.35 &976.40 &66.12 \\	
 		\hline
 	\end{tabular}
 	\label{tab6}

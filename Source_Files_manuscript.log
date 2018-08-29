@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.2.9)  23 AUG 2018 15:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.1.26)  28 AUG 2018 16:54
 entering extended mode
 **./Source_Files_manuscript.tex
 (Source_Files_manuscript.tex
@@ -474,7 +474,7 @@ Package: xifthen 2015/11/05 v1.4.0 Extended ifthen features
 Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\ifmtarg\ifmtarg.sty"
-Package: ifmtarg 2009/09/02 v1.2a check for an empty argument
+Package: ifmtarg 2018/04/16 v1.2b check for an empty argument
 ))
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\pdfcolmk.sty"
 Package: pdfcolmk 2016/05/16 v1.3 Color support for pdfTeX via marks (HO)
@@ -700,7 +700,7 @@ Package mathptmx Warning: There are no bold math fonts on input line 102.
 [1
 
 
-{C:/Users/fernando/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+{C:/Users/Fernando/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
 LaTeX Font Info:    Try loading font information for OMS+ptm on input line 106.
 
 
@@ -786,71 +786,83 @@ Underfull \hbox (badness 10000) in paragraph at lines 411--412
 y:
  []
 
+
+Overfull \hbox (46.37836pt too wide) in paragraph at lines 427--437
+[][] 
+ []
+
+
+Package caption Warning: \label without proper reference on input line 421.
+See the caption package documentation for explanation.
+
+
+LaTeX Warning: Reference `tab11' on page 14 undefined on input line 441.
+
 [14]
-<FIGURE6.jpeg, id=335, 483.30562pt x 482.55281pt>
+<FIGURE6.jpeg, id=336, 483.30562pt x 482.55281pt>
 File: FIGURE6.jpeg Graphic file (type jpg)
 <use FIGURE6.jpeg>
-Package pdftex.def Info: FIGURE6.jpeg  used on input line 425. on input line 42
-5.
+Package pdftex.def Info: FIGURE6.jpeg  used on input line 446. on input line 44
+6.
 Package pdftex.def Info: Requested size: 87.97652pt x 87.83505pt on input line 
-425.
-<FIGURE7.jpeg, id=336, 700.11563pt x 590.95781pt>
+446.
+<FIGURE7.jpeg, id=337, 700.11563pt x 590.95781pt>
 File: FIGURE7.jpeg Graphic file (type jpg)
 <use FIGURE7.jpeg>
-Package pdftex.def Info: FIGURE7.jpeg  used on input line 431. on input line 43
-1.
+Package pdftex.def Info: FIGURE7.jpeg  used on input line 452. on input line 45
+2.
 Package pdftex.def Info: Requested size: 103.50105pt x 87.35939pt on input line
- 431.
-<FIGURE8.jpeg, id=337, 711.4078pt x 586.44093pt>
+ 452.
+<FIGURE8.jpeg, id=338, 711.4078pt x 586.44093pt>
 File: FIGURE8.jpeg Graphic file (type jpg)
 <use FIGURE8.jpeg>
-Package pdftex.def Info: FIGURE8.jpeg  used on input line 437. on input line 43
-7.
+Package pdftex.def Info: FIGURE8.jpeg  used on input line 458. on input line 45
+8.
 Package pdftex.def Info: Requested size: 103.50105pt x 85.31363pt on input line
- 437.
-<FIGURE9.jpeg, id=339, 484.81125pt x 496.10344pt>
+ 458.
+<FIGURE9.jpeg, id=340, 484.81125pt x 496.10344pt>
 File: FIGURE9.jpeg Graphic file (type jpg)
 <use FIGURE9.jpeg>
-Package pdftex.def Info: FIGURE9.jpeg  used on input line 451. on input line 45
-1.
+Package pdftex.def Info: FIGURE9.jpeg  used on input line 472. on input line 47
+2.
 Package pdftex.def Info: Requested size: 103.50105pt x 105.91074pt on input lin
-e 451.
-<FIGURE10.jpeg, id=340, 486.31688pt x 494.59781pt>
+e 472.
+<FIGURE10.jpeg, id=341, 486.31688pt x 494.59781pt>
 File: FIGURE10.jpeg Graphic file (type jpg)
 <use FIGURE10.jpeg>
-Package pdftex.def Info: FIGURE10.jpeg  used on input line 457. on input line 4
-57.
+Package pdftex.def Info: FIGURE10.jpeg  used on input line 478. on input line 4
+78.
 Package pdftex.def Info: Requested size: 103.50105pt x 105.25723pt on input lin
-e 457.
-<FIGURE11.jpeg, id=341, 484.05844pt x 482.55281pt>
+e 478.
+<FIGURE11.jpeg, id=342, 484.05844pt x 482.55281pt>
 File: FIGURE11.jpeg Graphic file (type jpg)
 <use FIGURE11.jpeg>
-Package pdftex.def Info: FIGURE11.jpeg  used on input line 463. on input line 4
-63.
+Package pdftex.def Info: FIGURE11.jpeg  used on input line 484. on input line 4
+84.
 Package pdftex.def Info: Requested size: 103.50105pt x 103.1725pt on input line
- 463.
-<FIGURE12.jpeg, id=342, 482.55281pt x 483.30562pt>
+ 484.
+<FIGURE12.jpeg, id=343, 482.55281pt x 483.30562pt>
 File: FIGURE12.jpeg Graphic file (type jpg)
 <use FIGURE12.jpeg>
-Package pdftex.def Info: FIGURE12.jpeg  used on input line 469. on input line 4
-69.
+Package pdftex.def Info: FIGURE12.jpeg  used on input line 490. on input line 4
+90.
 Package pdftex.def Info: Requested size: 103.50105pt x 103.65794pt on input lin
-e 469.
+e 490.
  [15 <./FIGURE6.jpeg> <./FIGURE7.jpeg> <./FIGURE8.jpeg>] [16 <./FIGURE9.jpeg> <
 ./FIGURE10.jpeg> <./FIGURE11.jpeg> <./FIGURE12.jpeg>]
-<FIGURE13.png, id=376, 453.8556pt x 235.6002pt>
+<FIGURE13.png, id=377, 453.8556pt x 235.6002pt>
 File: FIGURE13.png Graphic file (type png)
 <use FIGURE13.png>
-Package pdftex.def Info: FIGURE13.png  used on input line 497. on input line 49
-7.
+Package pdftex.def Info: FIGURE13.png  used on input line 518. on input line 51
+8.
 Package pdftex.def Info: Requested size: 189.75105pt x 98.50203pt on input line
- 497.
-<FIGURE14.png, id=377, 671.1474pt x 253.4268pt>
+ 518.
+<FIGURE14.png, id=378, 671.1474pt x 253.4268pt>
 File: FIGURE14.png Graphic file (type png)
 <use FIGURE14.png>
-Package pdftex.def Info: FIGURE14.png  used on input line 506. on input line 50
-6.
-Package pdftex.def Info: Requested size: 258.75pt x 97.7069pt on input line 506
+Package pdftex.def Info: FIGURE14.png  used on input line 527. on input line 52
+7.
+Package pdftex.def Info: Requested size: 258.75pt x 97.7069pt on input line 527
 .
 
 
@@ -864,141 +876,145 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 LaTeX Warning: Text page 19 contains only floats.
 
 [19] [20]
-<FIGURE15.jpeg, id=420, 487.06969pt x 486.31688pt>
+<FIGURE15.jpeg, id=422, 487.06969pt x 486.31688pt>
 File: FIGURE15.jpeg Graphic file (type jpg)
 <use FIGURE15.jpeg>
-Package pdftex.def Info: FIGURE15.jpeg  used on input line 672. on input line 6
-72.
+Package pdftex.def Info: FIGURE15.jpeg  used on input line 693. on input line 6
+93.
 Package pdftex.def Info: Requested size: 82.80115pt x 82.67278pt on input line 
-672.
-<FIGURE16.jpeg, id=421, 590.95781pt x 590.95781pt>
+693.
+<FIGURE16.jpeg, id=423, 590.95781pt x 590.95781pt>
 File: FIGURE16.jpeg Graphic file (type jpg)
 <use FIGURE16.jpeg>
-Package pdftex.def Info: FIGURE16.jpeg  used on input line 679. on input line 6
-79.
+Package pdftex.def Info: FIGURE16.jpeg  used on input line 700. on input line 7
+00.
 Package pdftex.def Info: Requested size: 82.80115pt x 82.79665pt on input line 
-679.
-<FIGURE17.jpeg, id=422, 722.7pt x 579.66562pt>
+700.
+<FIGURE17.jpeg, id=424, 722.7pt x 579.66562pt>
 File: FIGURE17.jpeg Graphic file (type jpg)
 <use FIGURE17.jpeg>
-Package pdftex.def Info: FIGURE17.jpeg  used on input line 686. on input line 6
-86.
+Package pdftex.def Info: FIGURE17.jpeg  used on input line 707. on input line 7
+07.
 Package pdftex.def Info: Requested size: 103.50105pt x 83.01007pt on input line
- 686.
-<FIGURE18.jpeg, id=423, 735.49782pt x 596.2275pt>
+ 707.
+<FIGURE18.jpeg, id=425, 735.49782pt x 596.2275pt>
 File: FIGURE18.jpeg Graphic file (type jpg)
 <use FIGURE18.jpeg>
-Package pdftex.def Info: FIGURE18.jpeg  used on input line 698. on input line 6
-98.
+Package pdftex.def Info: FIGURE18.jpeg  used on input line 719. on input line 7
+19.
 Package pdftex.def Info: Requested size: 103.50105pt x 83.89886pt on input line
- 698.
-<FIGURE19.jpeg, id=424, 724.20563pt x 585.68813pt>
+ 719.
+<FIGURE19.jpeg, id=426, 724.20563pt x 585.68813pt>
 File: FIGURE19.jpeg Graphic file (type jpg)
 <use FIGURE19.jpeg>
-Package pdftex.def Info: FIGURE19.jpeg  used on input line 705. on input line 7
-05.
+Package pdftex.def Info: FIGURE19.jpeg  used on input line 726. on input line 7
+26.
 Package pdftex.def Info: Requested size: 103.50105pt x 83.70271pt on input line
- 705.
-<FIGURE20.jpeg, id=425, 724.95844pt x 584.93532pt>
+ 726.
+<FIGURE20.jpeg, id=427, 724.95844pt x 584.93532pt>
 File: FIGURE20.jpeg Graphic file (type jpg)
 <use FIGURE20.jpeg>
-Package pdftex.def Info: FIGURE20.jpeg  used on input line 712. on input line 7
-12.
+Package pdftex.def Info: FIGURE20.jpeg  used on input line 733. on input line 7
+33.
 Package pdftex.def Info: Requested size: 103.50105pt x 83.50587pt on input line
- 712.
+ 733.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<FIGURE21.jpeg, id=426, 737.75626pt x 599.99156pt>
+<FIGURE21.jpeg, id=428, 737.75626pt x 599.99156pt>
 File: FIGURE21.jpeg Graphic file (type jpg)
 <use FIGURE21.jpeg>
-Package pdftex.def Info: FIGURE21.jpeg  used on input line 723. on input line 7
-23.
+Package pdftex.def Info: FIGURE21.jpeg  used on input line 744. on input line 7
+44.
 Package pdftex.def Info: Requested size: 103.50105pt x 84.17218pt on input line
- 723.
-<FIGURE22.jpeg, id=427, 728.7225pt x 584.1825pt>
+ 744.
+<FIGURE22.jpeg, id=429, 728.7225pt x 584.1825pt>
 File: FIGURE22.jpeg Graphic file (type jpg)
 <use FIGURE22.jpeg>
-Package pdftex.def Info: FIGURE22.jpeg  used on input line 730. on input line 7
-30.
+Package pdftex.def Info: FIGURE22.jpeg  used on input line 751. on input line 7
+51.
 Package pdftex.def Info: Requested size: 103.50105pt x 82.97054pt on input line
- 730.
-<FIGURE23.jpeg, id=428, 725.71124pt x 586.44093pt>
+ 751.
+<FIGURE23.jpeg, id=430, 725.71124pt x 586.44093pt>
 File: FIGURE23.jpeg Graphic file (type jpg)
 <use FIGURE23.jpeg>
-Package pdftex.def Info: FIGURE23.jpeg  used on input line 737. on input line 7
-37.
+Package pdftex.def Info: FIGURE23.jpeg  used on input line 758. on input line 7
+58.
 Package pdftex.def Info: Requested size: 103.50105pt x 83.63133pt on input line
- 737.
+ 758.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-Overfull \hbox (1.66913pt too wide) in paragraph at lines 752--769
+Overfull \hbox (1.66913pt too wide) in paragraph at lines 773--790
 [][] 
  []
 
 [21 <./FIGURE15.jpeg> <./FIGURE16.jpeg> <./FIGURE17.jpeg>]
-<FIGURE24.jpg, id=441, 204.765pt x 205.36725pt>
+<FIGURE24.jpg, id=443, 204.765pt x 205.36725pt>
 File: FIGURE24.jpg Graphic file (type jpg)
 <use FIGURE24.jpg>
-Package pdftex.def Info: FIGURE24.jpg  used on input line 800. on input line 80
-0.
+Package pdftex.def Info: FIGURE24.jpg  used on input line 821. on input line 82
+1.
 Package pdftex.def Info: Requested size: 103.50105pt x 103.80835pt on input lin
-e 800.
+e 821.
  [22 <./FIGURE18.jpeg> <./FIGURE19.jpeg> <./FIGURE20.jpeg> <./FIGURE21.jpeg> <.
 /FIGURE22.jpeg> <./FIGURE23.jpeg> <./FIGURE24.jpg>] [23] [24]
-<FIGURE25.jpg, id=469, 518.6878pt x 490.83376pt>
+<FIGURE25.jpg, id=471, 518.6878pt x 490.83376pt>
 File: FIGURE25.jpg Graphic file (type jpg)
 <use FIGURE25.jpg>
-Package pdftex.def Info: FIGURE25.jpg  used on input line 880. on input line 88
-0.
+Package pdftex.def Info: FIGURE25.jpg  used on input line 901. on input line 90
+1.
 Package pdftex.def Info: Requested size: 109.71086pt x 103.81958pt on input lin
-e 880.
+e 901.
 
-Overfull \hbox (6.20981pt too wide) in paragraph at lines 880--881
+Overfull \hbox (6.20981pt too wide) in paragraph at lines 901--902
 [][] 
  []
 
-<FIGURE26.jpg, id=470, 492.33937pt x 493.0922pt>
+<FIGURE26.jpg, id=472, 492.33937pt x 493.0922pt>
 File: FIGURE26.jpg Graphic file (type jpg)
 <use FIGURE26.jpg>
-Package pdftex.def Info: FIGURE26.jpg  used on input line 886. on input line 88
-6.
+Package pdftex.def Info: FIGURE26.jpg  used on input line 907. on input line 90
+7.
 Package pdftex.def Info: Requested size: 103.50105pt x 103.65775pt on input lin
-e 886.
-<FIGURE27.jpeg, id=471, 624.08156pt x 483.30562pt>
+e 907.
+<FIGURE27.jpeg, id=473, 624.08156pt x 483.30562pt>
 File: FIGURE27.jpeg Graphic file (type jpg)
 <use FIGURE27.jpeg>
-Package pdftex.def Info: FIGURE27.jpeg  used on input line 898. on input line 8
-98.
+Package pdftex.def Info: FIGURE27.jpeg  used on input line 919. on input line 9
+19.
 Package pdftex.def Info: Requested size: 120.7521pt x 93.51044pt on input line 
-898.
-<FIGURE28.jpeg, id=472, 612.03656pt x 484.81125pt>
+919.
+<FIGURE28.jpeg, id=474, 612.03656pt x 484.81125pt>
 File: FIGURE28.jpeg Graphic file (type jpg)
 <use FIGURE28.jpeg>
-Package pdftex.def Info: FIGURE28.jpeg  used on input line 905. on input line 9
-05.
+Package pdftex.def Info: FIGURE28.jpeg  used on input line 926. on input line 9
+26.
 Package pdftex.def Info: Requested size: 120.7521pt x 95.65115pt on input line 
-905.
-<FIGURE29.jpeg, id=473, 606.76688pt x 484.05844pt>
+926.
+<FIGURE29.jpeg, id=475, 606.76688pt x 484.05844pt>
 File: FIGURE29.jpeg Graphic file (type jpg)
 <use FIGURE29.jpeg>
-Package pdftex.def Info: FIGURE29.jpeg  used on input line 918. on input line 9
-18.
+Package pdftex.def Info: FIGURE29.jpeg  used on input line 939. on input line 9
+39.
 Package pdftex.def Info: Requested size: 120.7521pt x 96.32986pt on input line 
-918.
-<FIGURE30.jpeg, id=474, 605.26125pt x 483.30562pt>
+939.
+<FIGURE30.jpeg, id=476, 605.26125pt x 483.30562pt>
 File: FIGURE30.jpeg Graphic file (type jpg)
 <use FIGURE30.jpeg>
-Package pdftex.def Info: FIGURE30.jpeg  used on input line 926. on input line 9
-26.
+Package pdftex.def Info: FIGURE30.jpeg  used on input line 947. on input line 9
+47.
 Package pdftex.def Info: Requested size: 120.7521pt x 96.41605pt on input line 
-926.
-[25 <./FIGURE25.jpg> <./FIGURE26.jpg>] [26 <./FIGURE27.jpeg> <./FIGURE28.jpeg> 
-<./FIGURE29.jpeg> <./FIGURE30.jpeg>]
-Overfull \hbox (4.26736pt too wide) in paragraph at lines 966--967
+947.
+[25 <./FIGURE25.jpg> <./FIGURE26.jpg>]
+Overfull \hbox (14.31894pt too wide) in paragraph at lines 962--978
+ [][] 
+ []
+
+[26 <./FIGURE27.jpeg> <./FIGURE28.jpeg> <./FIGURE29.jpeg> <./FIGURE30.jpeg>]
+Overfull \hbox (4.26736pt too wide) in paragraph at lines 985--986
 \OT1/ptm/m/n/10 buco State Foun-da-tion for Sci-ence and Tech-nol-ogy (FACEPE),
  Brazil-ian Na-tional Coun-
  []
@@ -1013,12 +1029,12 @@ g / 64bb /
 \Changes@OutFile=\write5
 \openout5 = `Source_Files_manuscript.soc'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 971.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 990.
  [31]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 971.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 990.
  (Source_Files_manuscript.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 971.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 971.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 990.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 990.
 Package rerunfilecheck Info: File `Source_Files_manuscript.out' has not changed
 .
 (rerunfilecheck)             Checksum: F52D11E2B8AD13F76B0E2BBC62AB108A;1250.
@@ -1027,16 +1043,19 @@ Package rerunfilecheck Info: File `Source_Files_manuscript.out' has not changed
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 0.55997pt have occurred.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 971.
+
+LaTeX Warning: There were undefined references.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 990.
  ) 
 Here is how much of TeX's memory you used:
- 11263 strings out of 493312
- 169075 string characters out of 3138891
- 382834 words of memory out of 3000000
- 14361 multiletter control sequences out of 15000+200000
+ 11265 strings out of 493312
+ 169098 string characters out of 3138890
+ 382918 words of memory out of 3000000
+ 14362 multiletter control sequences out of 15000+200000
  55175 words of font info for 136 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 42i,20n,77p,1836b,578s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 42i,20n,77p,1836b,579s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/base/8r.enc}<C:/Program Files/Mi
 KTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKTeX 2.9
 /fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
@@ -1051,9 +1070,9 @@ X 2.9/fonts/type1/urw/symbol/usyr.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/
 urw/times/utmb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.
 pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb><C:/Program 
 Files/MiKTeX 2.9/fonts/type1/urw/zapfchan/uzcmi8a.pfb>
-Output written on Source_Files_manuscript.pdf (31 pages, 5422031 bytes).
+Output written on Source_Files_manuscript.pdf (31 pages, 5423010 bytes).
 PDF statistics:
- 644 PDF objects out of 1000 (max. 8388607)
- 157 named destinations out of 1000 (max. 500000)
+ 646 PDF objects out of 1000 (max. 8388607)
+ 158 named destinations out of 1000 (max. 500000)
  261 words of extra memory for PDF output out of 10000 (max. 10000000)
 
